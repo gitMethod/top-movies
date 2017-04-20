@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/details_image"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="160dp"
+        android:layout_height="240dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="32dp"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -22,9 +22,9 @@
         android:layout_height="wrap_content"
         android:text="Dummy title"
         app:layout_constraintLeft_toRightOf="@+id/details_image"
-        android:layout_marginLeft="24dp"
+        android:layout_marginLeft="32dp"
         app:layout_constraintTop_toTopOf="@+id/details_image"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="32dp" />
 
     <TextView
         android:id="@+id/details_release"
@@ -53,7 +53,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="32dp"
         android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"

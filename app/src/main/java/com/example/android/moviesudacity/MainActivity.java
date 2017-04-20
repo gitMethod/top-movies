@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,6 @@ public class MainActivity extends AppCompatActivity implements
     private String MOVIES_URL =
             "https://api.themoviedb.org/3/movie/popular?api_key=dbb539c09bc6d9e2e9e6bf360b705e5b";
     private static final int MOVIES_LOADER_ID = 1;
-    private Toast mToast;
     private MoviesAdapter mAdapter;
     private RecyclerView recView;
 
@@ -59,9 +57,10 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onListItemClick(int position) {
+    public void onListItemClick(Movie movie) {
+
         Intent intent = new Intent(this, DetailsActivity.class);
-        intent.putExtra("indexPosition", position);
+        intent.putExtra("clickedMovie", movie);
         startActivity(intent);
     }
 }

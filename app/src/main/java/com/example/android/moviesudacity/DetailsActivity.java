@@ -7,18 +7,30 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class DetailsActivity extends AppCompatActivity {
-    private ImageView image = (ImageView) findViewById(R.id.details_image);
-    private TextView title = (TextView) findViewById(R.id.details_title);
-    private TextView release = (TextView) findViewById(R.id.details_release);
-    private TextView rating = (TextView) findViewById(R.id.details_raiting);
-    private TextView synopsis = (TextView) findViewById(R.id.details_synopsis);
+    private ImageView image;
+    private TextView title;
+    private TextView release;
+    private TextView rating;
+    private TextView synopsis;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
+        image = (ImageView) findViewById(R.id.details_image);
+        title = (TextView) findViewById(R.id.details_title);
+        release = (TextView) findViewById(R.id.details_release);
+        rating = (TextView) findViewById(R.id.details_raiting);
+        synopsis = (TextView) findViewById(R.id.details_synopsis);
+
         Intent intent = getIntent();
-        int index = intent.getIntExtra("indexPosition", 0);
+        Movie clickedMovie = intent.getParcelableExtra("clickedMovie");
+
+        image.setImageBitmap(clickedMovie.getBitmapImg());
+        title.setText(clickedMovie.getTitle());
+        release.setText(clickedMovie.getRelease());
+        rating.setText(Double.toString(clickedMovie.getRating()));
+        synopsis.setText(clickedMovie.getSynopsis());
     }
 }
