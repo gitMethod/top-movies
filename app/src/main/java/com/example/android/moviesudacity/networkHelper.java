@@ -97,13 +97,16 @@ public class networkHelper {
             for (int i = 0; i < movieArray.length(); i++) {
 
                 JSONObject currentMovie = movieArray.getJSONObject(i);
+
                 String imageUrl = currentMovie.getString("poster_path");
                 String wholeUrl = BASE_IMAGE_URL + BASE_IMAGE_SIZE + imageUrl;
                 Bitmap bitmap = getBitmapFromURL(wholeUrl);
+
                 String title = currentMovie.getString("title");
                 String synopsis = currentMovie.getString("overview");
                 double rating = currentMovie.getDouble("vote_average");
                 String release = currentMovie.getString("release_date");
+
                 Movie movie = new Movie(title, synopsis, rating, release, bitmap);
                 movies.add(movie);
             }

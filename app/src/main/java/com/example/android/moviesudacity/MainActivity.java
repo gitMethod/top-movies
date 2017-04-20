@@ -2,6 +2,7 @@
 package com.example.android.moviesudacity;
 
 import android.app.LoaderManager;
+import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -57,18 +58,11 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-
-
     @Override
-    public void onListItemClick(String name) {
-        if (mToast != null) {
-            mToast.cancel();
-        }
-
-        String toastMessage = "Movie: " + name + " clicked.";
-        mToast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
-
-        mToast.show();
+    public void onListItemClick(int position) {
+        Intent intent = new Intent(this, DetailsActivity.class);
+        intent.putExtra("indexPosition", position);
+        startActivity(intent);
     }
 }
 

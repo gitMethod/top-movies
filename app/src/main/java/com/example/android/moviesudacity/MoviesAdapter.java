@@ -11,8 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder> {
+
     public interface ListItemClickListener {
-        void onListItemClick(String movieName);
+        void onListItemClick(int position);
     }
 
     final private ListItemClickListener mOnClickListener;
@@ -67,10 +68,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
         @Override
         public void onClick(View v) {
-            Movie movie = moviesArray.get(getAdapterPosition());
-            String name = movie.getTitle();
             int clickedPosition = getAdapterPosition();
-            mOnClickListener.onListItemClick(name);
+            mOnClickListener.onListItemClick(clickedPosition);
         }
     }
 }
