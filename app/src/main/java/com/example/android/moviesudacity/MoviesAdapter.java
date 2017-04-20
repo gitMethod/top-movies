@@ -19,11 +19,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
     final private ListItemClickListener mOnClickListener;
     private ArrayList<Movie> moviesArray;
     private static final String TAG = MoviesAdapter.class.getSimpleName();
-    private Context mContext;
 
-    public MoviesAdapter( ArrayList<Movie> moviesArray, Context context, ListItemClickListener listener) {
+    public MoviesAdapter( ArrayList<Movie> moviesArray, ListItemClickListener listener) {
         this.moviesArray = moviesArray;
-        this.mContext = context;
         this.mOnClickListener = listener;
     }
 

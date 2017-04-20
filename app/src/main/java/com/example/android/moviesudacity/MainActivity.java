@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements
     private static final int MOVIES_LOADER_ID = 1;
     private MoviesAdapter mAdapter;
     private RecyclerView recView;
+    private MoviesList moviesList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,13 +33,18 @@ public class MainActivity extends AppCompatActivity implements
         recView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL ));
         recView.setHasFixedSize(true);
 
-        mAdapter = new MoviesAdapter(new ArrayList<Movie>(), MainActivity.this, this);
+        mAdapter = new MoviesAdapter(new ArrayList<Movie>(), this);
         recView.setAdapter(mAdapter);
 
         LoaderManager loaderManager = getLoaderManager();
         loaderManager.initLoader(MOVIES_LOADER_ID, null, this);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable("savedList", moviesList);
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public Loader<List<Movie>> onCreateLoader(int id, Bundle args) {
@@ -48,9 +54,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> data) {
 
-        if(data != null && !data.isEmpty()){
-            mAdapter.swap(data);
-        }
+        mAdapter.swap(data);
 
         LinearLayout spinner=(LinearLayout)findViewById(R.id.progressBarParent);
         spinner.setVisibility(View.GONE);
