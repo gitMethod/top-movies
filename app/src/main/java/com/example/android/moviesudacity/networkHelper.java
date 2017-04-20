@@ -1,5 +1,7 @@
 package com.example.android.moviesudacity;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -20,6 +22,8 @@ import java.util.List;
 
 public class networkHelper {
     private static final String LOG_TAG = networkHelper.class.getSimpleName();
+    private static final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
+    private static final String BASE_IMAGE_SIZE = "w185/";
 
     private static URL createUrl(String stringUrl){
         URL url = null;
@@ -94,11 +98,13 @@ public class networkHelper {
 
                 JSONObject currentMovie = movieArray.getJSONObject(i);
                 String imageUrl = currentMovie.getString("poster_path");
+                String wholeUrl = BASE_IMAGE_URL + BASE_IMAGE_SIZE + imageUrl;
+                Bitmap bitmap = getBitmapFromURL(wholeUrl);
                 String title = currentMovie.getString("title");
                 String synopsis = currentMovie.getString("overview");
                 double rating = currentMovie.getDouble("vote_average");
                 String release = currentMovie.getString("release_date");
-                Movie movie = new Movie(title, synopsis, rating, release, imageUrl);
+                Movie movie = new Movie(title, synopsis, rating, release, bitmap);
                 movies.add(movie);
             }
         } catch (JSONException e) {
@@ -122,5 +128,18 @@ public class networkHelper {
         return movies;
     }
 
+    private static Bitmap getBitmapFromURL(String src) {
+        try {
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            return BitmapFactory.decodeStream(input);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Problem retrieving the movie picture", e);
+            return null;
+        }
+    }
 }
 

@@ -1,18 +1,20 @@
 package com.example.android.moviesudacity;
 
+import android.graphics.Bitmap;
+
 public class Movie {
     private String title;
     private String synopsis;
     private double rating;
     private String release;
-    private String posterUrl;
+    private Bitmap bitmapImg;
 
-    public Movie(String title, String synopsis, double rating, String release, String posterUrl) {
+    public Movie(String title, String synopsis, double rating, String release, Bitmap bitmapImg) {
         this.title = title;
         this.synopsis = synopsis;
         this.rating = rating;
         this.release = release;
-        this.posterUrl = posterUrl;
+        this.bitmapImg = bitmapImg;
     }
 
     public String getTitle() {
@@ -31,7 +33,7 @@ public class Movie {
         return release;
     }
 
-    public String getPosterUrl() {
-        return posterUrl;
+    public Bitmap getBitmapImg() {
+        return bitmapImg;
     }
 }

@@ -7,16 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder> {
     private ArrayList<Movie> moviesArray;
     private static final String TAG = MoviesAdapter.class.getSimpleName();
-    private static final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
-    private static final String BASE_IMAGE_SIZE = "w185/";
     Context mContext;
 
     public MoviesAdapter( ArrayList<Movie> moviesArray, Context context) {
@@ -46,8 +42,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
     @Override
     public void onBindViewHolder(MoviesViewHolder holder, int position) {
         Movie movie = moviesArray.get(position);
-        String imgUrl = BASE_IMAGE_URL + BASE_IMAGE_SIZE + movie.getPosterUrl();
-        Picasso.with(mContext).load(imgUrl).into(holder.posterImage);
+        holder.posterImage.setImageBitmap(movie.getBitmapImg());
     }
 
     @Override

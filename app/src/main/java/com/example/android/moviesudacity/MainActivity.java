@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         setContentView(R.layout.activity_main);
 
         recView = (RecyclerView) findViewById(R.id.movies_list);
-        recView.setLayoutManager(new LinearLayoutManager(this));
+        recView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL ));
         recView.setHasFixedSize(true);
 
         mAdapter = new MoviesAdapter(new ArrayList<Movie>(), MainActivity.this);
