@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +51,9 @@ public class MainActivity extends AppCompatActivity implements
         if(data != null && !data.isEmpty()){
             mAdapter.swap(data);
         }
+
+        LinearLayout spinner=(LinearLayout)findViewById(R.id.progressBarParent);
+        spinner.setVisibility(View.GONE);
     }
 
     @Override
