@@ -11,13 +11,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder> {
+    public interface ListItemClickListener {
+        void onListItemClick(String movieName);
+    }
+
+    final private ListItemClickListener mOnClickListener;
     private ArrayList<Movie> moviesArray;
     private static final String TAG = MoviesAdapter.class.getSimpleName();
-    Context mContext;
+    private Context mContext;
 
-    public MoviesAdapter( ArrayList<Movie> moviesArray, Context context) {
+    public MoviesAdapter( ArrayList<Movie> moviesArray, Context context, ListItemClickListener listener) {
         this.moviesArray = moviesArray;
         this.mContext = context;
+        this.mOnClickListener = listener;
     }
 
     public void swap(List<Movie> data){
@@ -50,12 +56,21 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         return moviesArray.size();
     }
 
-    class MoviesViewHolder extends RecyclerView.ViewHolder {
+    class MoviesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ImageView posterImage;
 
         public MoviesViewHolder(View itemView) {
             super(itemView);
             posterImage = (ImageView) itemView.findViewById(R.id.list_poster);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            Movie movie = moviesArray.get(getAdapterPosition());
+            String name = movie.getTitle();
+            int clickedPosition = getAdapterPosition();
+            mOnClickListener.onListItemClick(name);
         }
     }
 }

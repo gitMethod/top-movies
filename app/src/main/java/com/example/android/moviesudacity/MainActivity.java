@@ -8,15 +8,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Movie>>{
+public class MainActivity extends AppCompatActivity implements
+        LoaderManager.LoaderCallbacks<List<Movie>>, MoviesAdapter.ListItemClickListener {
     private String MOVIES_URL =
             "https://api.themoviedb.org/3/movie/popular?api_key=dbb539c09bc6d9e2e9e6bf360b705e5b";
     private static final int MOVIES_LOADER_ID = 1;
-
+    private Toast mToast;
     private MoviesAdapter mAdapter;
     private RecyclerView recView;
 
@@ -29,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         recView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL ));
         recView.setHasFixedSize(true);
 
-        mAdapter = new MoviesAdapter(new ArrayList<Movie>(), MainActivity.this);
+        mAdapter = new MoviesAdapter(new ArrayList<Movie>(), MainActivity.this, this);
         recView.setAdapter(mAdapter);
 
         LoaderManager loaderManager = getLoaderManager();
@@ -48,12 +50,25 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if(data != null && !data.isEmpty()){
             mAdapter.swap(data);
         }
-
     }
 
     @Override
     public void onLoaderReset(Loader<List<Movie>> loader) {
 
+    }
+
+
+
+    @Override
+    public void onListItemClick(String name) {
+        if (mToast != null) {
+            mToast.cancel();
+        }
+
+        String toastMessage = "Movie: " + name + " clicked.";
+        mToast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
+
+        mToast.show();
     }
 }
 
