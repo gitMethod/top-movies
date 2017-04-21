@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements
     private MoviesAdapter mAdapter;
     private RecyclerView recView;
     private MoviesList moviesList;
+    private Menu mainMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +44,6 @@ public class MainActivity extends AppCompatActivity implements
 
         mAdapter = new MoviesAdapter(new ArrayList<Movie>(), this);
         recView.setAdapter(mAdapter);
-
 
         ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -70,6 +70,9 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
+        mainMenu = menu;
+        mainMenu.findItem(R.id.action_rating).setVisible(false);
+        mainMenu.findItem(R.id.action_popularity).setVisible(false);
         return true;
     }
 
@@ -88,8 +91,11 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public Loader<List<Movie>> onCreateLoader(int id, Bundle args) {
+
         return new MovieLoader(this, MOVIES_URL);
+
     }
+
 
     @Override
     public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> data) {
@@ -99,6 +105,9 @@ public class MainActivity extends AppCompatActivity implements
 
         LinearLayout spinner=(LinearLayout)findViewById(progressBarParent);
         spinner.setVisibility(View.GONE);
+
+        mainMenu.findItem(R.id.action_rating).setVisible(true);
+        mainMenu.findItem(R.id.action_popularity).setVisible(true);
     }
 
     @Override
