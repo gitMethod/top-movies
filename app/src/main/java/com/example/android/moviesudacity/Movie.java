@@ -8,13 +8,15 @@ public class Movie implements Parcelable {
     private String title;
     private String synopsis;
     private double rating;
+    private double popularity;
     private String release;
     private Bitmap bitmapImg;
 
-    public Movie(String title, String synopsis, double rating, String release, Bitmap bitmapImg) {
+    public Movie(String title, String synopsis, double rating, double popularity, String release, Bitmap bitmapImg) {
         this.title = title;
         this.synopsis = synopsis;
         this.rating = rating;
+        this.popularity = popularity;
         this.release = release;
         this.bitmapImg = bitmapImg;
     }
@@ -29,6 +31,10 @@ public class Movie implements Parcelable {
 
     public double getRating() {
         return rating;
+    }
+
+    public double getPopularity() {
+        return popularity;
     }
 
     public String getRelease() {
@@ -49,6 +55,7 @@ public class Movie implements Parcelable {
         dest.writeString(title);
         dest.writeString(synopsis);
         dest.writeDouble(rating);
+        dest.writeDouble(popularity);
         dest.writeString(release);
         dest.writeParcelable(bitmapImg, flags);
     }
@@ -57,6 +64,7 @@ public class Movie implements Parcelable {
         title = in.readString();
         synopsis = in.readString();
         rating = in.readDouble();
+        popularity = in.readDouble();
         release = in.readString();
         bitmapImg = in.readParcelable(Bitmap.class.getClassLoader());
     }

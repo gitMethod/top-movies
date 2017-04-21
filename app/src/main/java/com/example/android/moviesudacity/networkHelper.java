@@ -105,9 +105,10 @@ public class networkHelper {
                 String title = currentMovie.getString("title");
                 String synopsis = currentMovie.getString("overview");
                 double rating = currentMovie.getDouble("vote_average");
+                double popularity = currentMovie.getDouble("popularity");
                 String release = currentMovie.getString("release_date");
 
-                Movie movie = new Movie(title, synopsis, rating, release, bitmap);
+                Movie movie = new Movie(title, synopsis, rating, popularity, release, bitmap);
                 movies.add(movie);
                 Log.e("QueryUtils", "Movie "+movie.getTitle()+" addddddddddddddddddddddded");
             }

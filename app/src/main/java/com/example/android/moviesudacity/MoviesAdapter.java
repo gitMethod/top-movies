@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder> {
@@ -17,10 +16,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
     }
 
     final private ListItemClickListener mOnClickListener;
-    private ArrayList<Movie> moviesArray;
+    private List<Movie> moviesArray;
     private static final String TAG = MoviesAdapter.class.getSimpleName();
 
-    public MoviesAdapter( ArrayList<Movie> moviesArray, ListItemClickListener listener) {
+    public MoviesAdapter( List<Movie> moviesArray, ListItemClickListener listener) {
         this.moviesArray = moviesArray;
         this.mOnClickListener = listener;
     }
