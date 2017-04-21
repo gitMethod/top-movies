@@ -25,13 +25,15 @@ import static com.example.android.moviesudacity.R.id.progressBarParent;
 
 public class MainActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<List<Movie>>, MoviesAdapter.ListItemClickListener {
+
     private String MOVIES_URL =
             "https://api.themoviedb.org/3/movie/popular?api_key=dbb539c09bc6d9e2e9e6bf360b705e5b";
+
     private static final int MOVIES_LOADER_ID = 1;
     private MoviesAdapter mAdapter;
     private RecyclerView recView;
     private MoviesList moviesList;
-    private Menu mainMenu;
+    private boolean showMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,19 +63,22 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    /*@Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable("savedList", moviesList);
-        super.onSaveInstanceState(outState);
-    }*/
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
-        mainMenu = menu;
-        mainMenu.findItem(R.id.action_rating).setVisible(false);
-        mainMenu.findItem(R.id.action_popularity).setVisible(false);
+        if(!showMenu){
+            menu.findItem(R.id.action_rating).setVisible(false);
+            menu.findItem(R.id.action_popularity).setVisible(false);
+        } else {
+            menu.findItem(R.id.action_rating).setVisible(true);
+            menu.findItem(R.id.action_popularity).setVisible(true);
+        }
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -91,9 +96,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public Loader<List<Movie>> onCreateLoader(int id, Bundle args) {
-
         return new MovieLoader(this, MOVIES_URL);
-
     }
 
 
@@ -106,8 +109,9 @@ public class MainActivity extends AppCompatActivity implements
         LinearLayout spinner=(LinearLayout)findViewById(progressBarParent);
         spinner.setVisibility(View.GONE);
 
-        mainMenu.findItem(R.id.action_rating).setVisible(true);
-        mainMenu.findItem(R.id.action_popularity).setVisible(true);
+        showMenu = true;
+        invalidateOptionsMenu();
+
     }
 
     @Override

@@ -110,7 +110,6 @@ public class networkHelper {
 
                 Movie movie = new Movie(title, synopsis, rating, popularity, release, bitmap);
                 movies.add(movie);
-                Log.e("QueryUtils", "Movie "+movie.getTitle()+" addddddddddddddddddddddded");
             }
         } catch (JSONException e) {
             Log.e("QueryUtils", "Problem parsing the earthquake JSON results", e);
