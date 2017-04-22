@@ -24,8 +24,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         this.mOnClickListener = listener;
     }
 
-    public void swap(List<Movie> data){
+    public void clear(){
         moviesArray.clear();
+    }
+
+    public void swap(List<Movie> data){
         moviesArray.addAll(data);
         notifyDataSetChanged();
     }

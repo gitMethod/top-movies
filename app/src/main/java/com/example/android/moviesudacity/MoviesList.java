@@ -1,11 +1,8 @@
 package com.example.android.moviesudacity;
 
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class MoviesList implements Parcelable{
@@ -16,26 +13,6 @@ public class MoviesList implements Parcelable{
     }
 
     public List<Movie> getList() {
-        return list;
-    }
-
-    public List<Movie> sortByPopularity(){
-        Collections.sort(list, new Comparator<Movie>() {
-            @Override
-            public int compare(Movie c1, Movie c2) {
-                return Double.compare(c2.getPopularity(), c1.getPopularity());
-            }
-        });
-        return list;
-    }
-
-    public List<Movie> sortByRating(){
-        Collections.sort(list, new Comparator<Movie>() {
-            @Override
-            public int compare(Movie c1, Movie c2) {
-                return Double.compare(c2.getRating(), c1.getRating());
-            }
-        });
         return list;
     }
 
