@@ -1,9 +1,10 @@
 package com.example.android.moviesudacity;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
+
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,6 +20,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 public class networkHelper {
     private static final String LOG_TAG = networkHelper.class.getSimpleName();
@@ -84,40 +86,57 @@ public class networkHelper {
         return output.toString();
     }
 
-    private static List<Movie> extractFeatureFromJson(String movieJSON) {
+    private static List<Movie> extractFeatureFromJson(String movieJSON, final Context context) {
         if (TextUtils.isEmpty(movieJSON)) {
             return null;
         }
-        List<Movie> movies = new ArrayList<>();
+        final List<Movie> movies = new ArrayList<>();
 
         try {
             JSONObject baseJsonResponse = new JSONObject(movieJSON);
-            JSONArray movieArray = baseJsonResponse.getJSONArray("results");
+            JSONArray movieInfoArray = baseJsonResponse.getJSONArray("results");
 
-            for (int i = 0; i < movieArray.length(); i++) {
+            final CountDownLatch latch;
+            latch = new CountDownLatch(movieInfoArray.length());
 
-                JSONObject currentMovie = movieArray.getJSONObject(i);
-
+            for (int i=0; i<movieInfoArray.length(); i++){
+                JSONObject currentMovie = movieInfoArray.getJSONObject(i);
                 String imageUrl = currentMovie.getString("poster_path");
-                String wholeUrl = BASE_IMAGE_URL + BASE_IMAGE_SIZE + imageUrl;
-                Bitmap bitmap = getBitmapFromURL(wholeUrl);
+                final String wholeUrl = BASE_IMAGE_URL + BASE_IMAGE_SIZE + imageUrl;
 
-                String title = currentMovie.getString("title");
-                String synopsis = currentMovie.getString("overview");
-                double rating = currentMovie.getDouble("vote_average");
-                double popularity = currentMovie.getDouble("popularity");
-                String release = currentMovie.getString("release_date");
+                final String title = currentMovie.getString("title");
+                final String synopsis = currentMovie.getString("overview");
+                final double rating = currentMovie.getDouble("vote_average");
+                final double popularity = currentMovie.getDouble("popularity");
+                final String release = currentMovie.getString("release_date");
 
-                Movie movie = new Movie(title, synopsis, rating, popularity, release, bitmap);
-                movies.add(movie);
+                Picasso.with(context).load(wholeUrl).fetch(new com.squareup.picasso.Callback() {
+                    @Override
+                    public void onSuccess() {
+                        Movie movie = new Movie(title, synopsis, rating, popularity, release, wholeUrl);
+                        movies.add(movie);
+                        latch.countDown();
+                    }
+
+                    @Override
+                    public void onError() {
+                        Log.d(LOG_TAG, "error fetching image");
+                    }
+                });
+            }
+            try {
+                latch.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         } catch (JSONException e) {
-            Log.e("QueryUtils", "Problem parsing the earthquake JSON results", e);
+            Log.e("QueryUtils", "Problem parsing the movies JSON results", e);
         }
         return movies;
+
     }
 
-    public static List<Movie> moviesData(String requestUrl) {
+    public static List<Movie> moviesData(String requestUrl, Context context) {
         URL url = createUrl(requestUrl);
 
         String jsonResponse = null;
@@ -127,23 +146,9 @@ public class networkHelper {
             Log.e(LOG_TAG, "Problem making the HTTP request.", e);
         }
 
-        List<Movie> movies = extractFeatureFromJson(jsonResponse);
+        List<Movie> movies = extractFeatureFromJson(jsonResponse, context);
 
         return movies;
-    }
-
-    private static Bitmap getBitmapFromURL(String src) {
-        try {
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            return BitmapFactory.decodeStream(input);
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Problem retrieving the movie picture", e);
-            return null;
-        }
     }
 }
 

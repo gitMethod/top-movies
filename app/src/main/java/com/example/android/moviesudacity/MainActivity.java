@@ -9,7 +9,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.Menu;
@@ -44,12 +43,12 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         recView = (RecyclerView) findViewById(R.id.movies_list);
-        recView.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL ));
+        recView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL ));
         recView.setHasFixedSize(true);
 
         loaderManager = getLoaderManager();
 
-        mAdapter = new MoviesAdapter(new ArrayList<Movie>(), this);
+        mAdapter = new MoviesAdapter(new ArrayList<Movie>(), this, MainActivity.this);
         recView.setAdapter(mAdapter);
 
         checkInternetAndRun(MOVIES_URL_POPULAR);

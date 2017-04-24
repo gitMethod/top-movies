@@ -1,6 +1,5 @@
 package com.example.android.moviesudacity;
 
-import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -10,15 +9,15 @@ public class Movie implements Parcelable {
     private double rating;
     private double popularity;
     private String release;
-    private Bitmap bitmapImg;
+    private String imgUrl;
 
-    public Movie(String title, String synopsis, double rating, double popularity, String release, Bitmap bitmapImg) {
+    public Movie(String title, String synopsis, double rating, double popularity, String release, String imgUrl) {
         this.title = title;
         this.synopsis = synopsis;
         this.rating = rating;
         this.popularity = popularity;
         this.release = release;
-        this.bitmapImg = bitmapImg;
+        this.imgUrl = imgUrl;
     }
 
     public String getTitle() {
@@ -41,8 +40,8 @@ public class Movie implements Parcelable {
         return release;
     }
 
-    public Bitmap getBitmapImg() {
-        return bitmapImg;
+    public String getImagUrl() {
+        return imgUrl;
     }
 
     @Override
@@ -57,7 +56,7 @@ public class Movie implements Parcelable {
         dest.writeDouble(rating);
         dest.writeDouble(popularity);
         dest.writeString(release);
-        dest.writeParcelable(bitmapImg, flags);
+        dest.writeString(imgUrl);
     }
 
     protected Movie(Parcel in) {
@@ -66,7 +65,7 @@ public class Movie implements Parcelable {
         rating = in.readDouble();
         popularity = in.readDouble();
         release = in.readString();
-        bitmapImg = in.readParcelable(Bitmap.class.getClassLoader());
+        imgUrl = in.readString();
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {

@@ -2,10 +2,13 @@ package com.example.android.moviesudacity;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -18,10 +21,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
     final private ListItemClickListener mOnClickListener;
     private List<Movie> moviesArray;
     private static final String TAG = MoviesAdapter.class.getSimpleName();
+    private Context mainContext;
 
-    public MoviesAdapter( List<Movie> moviesArray, ListItemClickListener listener) {
+    public MoviesAdapter( List<Movie> moviesArray, ListItemClickListener listener, Context context) {
         this.moviesArray = moviesArray;
         this.mOnClickListener = listener;
+        this.mainContext = context;
     }
 
     public void clear(){
@@ -48,8 +53,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
     @Override
     public void onBindViewHolder(MoviesViewHolder holder, int position) {
-        Movie movie = moviesArray.get(position);
-        holder.posterImage.setImageBitmap(movie.getBitmapImg());
+        holder.bindView(position);
     }
 
     @Override
@@ -64,6 +68,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
             super(itemView);
             posterImage = (ImageView) itemView.findViewById(R.id.list_poster);
             itemView.setOnClickListener(this);
+        }
+
+        public void bindView(int i){
+            Picasso.with(mainContext).load(moviesArray.get(i).getImagUrl()).into(posterImage);
+            Log.e(TAG, moviesArray.get(i).getTitle() + "  loaded");
+
         }
 
         @Override

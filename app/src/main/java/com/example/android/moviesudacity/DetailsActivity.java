@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 public class DetailsActivity extends AppCompatActivity {
     private ImageView image;
     private TextView title;
@@ -27,7 +29,7 @@ public class DetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Movie clickedMovie = intent.getParcelableExtra("clickedMovie");
 
-        image.setImageBitmap(clickedMovie.getBitmapImg());
+        Picasso.with(DetailsActivity.this).load(clickedMovie.getImagUrl()).into(image);
         title.setText(clickedMovie.getTitle());
         release.setText(clickedMovie.getRelease());
         rating.setText(Double.toString(clickedMovie.getRating()));
