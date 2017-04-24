@@ -7,17 +7,17 @@ public class Movie implements Parcelable {
     private String title;
     private String synopsis;
     private double rating;
-    private double popularity;
     private String release;
     private String imgUrl;
+    private String backDrop;
 
-    public Movie(String title, String synopsis, double rating, double popularity, String release, String imgUrl) {
+    public Movie(String title, String synopsis, double rating, String release, String imgUrl, String backDrop) {
         this.title = title;
         this.synopsis = synopsis;
         this.rating = rating;
-        this.popularity = popularity;
         this.release = release;
         this.imgUrl = imgUrl;
+        this.backDrop = backDrop;
     }
 
     public String getTitle() {
@@ -32,16 +32,16 @@ public class Movie implements Parcelable {
         return rating;
     }
 
-    public double getPopularity() {
-        return popularity;
-    }
-
     public String getRelease() {
         return release;
     }
 
-    public String getImagUrl() {
+    public String getImgUrl() {
         return imgUrl;
+    }
+
+    public String getBackDrop() {
+        return backDrop;
     }
 
     @Override
@@ -54,18 +54,18 @@ public class Movie implements Parcelable {
         dest.writeString(title);
         dest.writeString(synopsis);
         dest.writeDouble(rating);
-        dest.writeDouble(popularity);
         dest.writeString(release);
         dest.writeString(imgUrl);
+        dest.writeString(backDrop);
     }
 
     protected Movie(Parcel in) {
         title = in.readString();
         synopsis = in.readString();
         rating = in.readDouble();
-        popularity = in.readDouble();
         release = in.readString();
         imgUrl = in.readString();
+        backDrop = in.readString();
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {

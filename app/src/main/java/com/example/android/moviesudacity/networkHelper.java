@@ -26,6 +26,7 @@ public class networkHelper {
     private static final String LOG_TAG = networkHelper.class.getSimpleName();
     private static final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private static final String BASE_IMAGE_SIZE = "w185/";
+    private static final String BASE_BACKDROP_SIZE = "w500/";
 
     private static URL createUrl(String stringUrl){
         URL url = null;
@@ -86,7 +87,7 @@ public class networkHelper {
         return output.toString();
     }
 
-    private static List<Movie> extractFeatureFromJson(String movieJSON, final Context context) {
+    private static List<Movie> extractFeatureFromJson(String movieJSON) {
         if (TextUtils.isEmpty(movieJSON)) {
             return null;
         }
@@ -96,44 +97,60 @@ public class networkHelper {
             JSONObject baseJsonResponse = new JSONObject(movieJSON);
             JSONArray movieInfoArray = baseJsonResponse.getJSONArray("results");
 
-            final CountDownLatch latch;
-            latch = new CountDownLatch(movieInfoArray.length());
-
             for (int i=0; i<movieInfoArray.length(); i++){
                 JSONObject currentMovie = movieInfoArray.getJSONObject(i);
                 String imageUrl = currentMovie.getString("poster_path");
-                final String wholeUrl = BASE_IMAGE_URL + BASE_IMAGE_SIZE + imageUrl;
+                String wholeUrlImage = BASE_IMAGE_URL + BASE_IMAGE_SIZE + imageUrl;
 
-                final String title = currentMovie.getString("title");
-                final String synopsis = currentMovie.getString("overview");
-                final double rating = currentMovie.getDouble("vote_average");
-                final double popularity = currentMovie.getDouble("popularity");
-                final String release = currentMovie.getString("release_date");
+                String backDrop = currentMovie.getString("backdrop_path");
+                String wholeUrlBackdrop = BASE_IMAGE_URL + BASE_BACKDROP_SIZE + backDrop;
 
-                Picasso.with(context).load(wholeUrl).fetch(new com.squareup.picasso.Callback() {
-                    @Override
-                    public void onSuccess() {
-                        Movie movie = new Movie(title, synopsis, rating, popularity, release, wholeUrl);
-                        movies.add(movie);
-                        latch.countDown();
-                    }
+                String title = currentMovie.getString("title");
+                String synopsis = currentMovie.getString("overview");
+                double rating = currentMovie.getDouble("vote_average");
+                String release = currentMovie.getString("release_date");
 
-                    @Override
-                    public void onError() {
-                        Log.d(LOG_TAG, "error fetching image");
-                    }
-                });
-            }
-            try {
-                latch.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                Movie movie = new Movie(title, synopsis, rating, release, wholeUrlImage, wholeUrlBackdrop);
+                movies.add(movie);
             }
         } catch (JSONException e) {
             Log.e("QueryUtils", "Problem parsing the movies JSON results", e);
         }
         return movies;
+    }
 
+    public static void cachedJsonImg(List<Movie> list, Context context){
+        final CountDownLatch latch = new CountDownLatch(list.size() * 2);
+        for (int i=0; i<list.size(); i++){
+            final Movie movie = list.get(i);
+
+            Picasso.with(context).load(movie.getImgUrl()).fetch(new com.squareup.picasso.Callback() {
+                @Override
+                public void onSuccess() {
+                    latch.countDown();
+                }
+                @Override
+                public void onError() {
+                    Log.d(LOG_TAG, "error fetching image");
+                }
+            });
+
+            Picasso.with(context).load(movie.getBackDrop()).fetch(new com.squareup.picasso.Callback() {
+                @Override
+                public void onSuccess() {
+                    latch.countDown();
+                }
+                @Override
+                public void onError() {
+                    Log.d(LOG_TAG, "error fetching image");
+                }
+            });
+        }
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static List<Movie> moviesData(String requestUrl, Context context) {
@@ -146,7 +163,8 @@ public class networkHelper {
             Log.e(LOG_TAG, "Problem making the HTTP request.", e);
         }
 
-        List<Movie> movies = extractFeatureFromJson(jsonResponse, context);
+        List<Movie> movies = extractFeatureFromJson(jsonResponse);
+        cachedJsonImg(movies, context);
 
         return movies;
     }
