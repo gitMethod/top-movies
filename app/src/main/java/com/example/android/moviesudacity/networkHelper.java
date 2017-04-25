@@ -87,7 +87,7 @@ public class networkHelper {
         return output.toString();
     }
 
-    private static List<Movie> extractFeatureFromJson(String movieJSON) {
+    private static List<Movie> extractMoviesFromJson(String movieJSON) {
         if (TextUtils.isEmpty(movieJSON)) {
             return null;
         }
@@ -163,7 +163,7 @@ public class networkHelper {
             Log.e(LOG_TAG, "Problem making the HTTP request.", e);
         }
 
-        List<Movie> movies = extractFeatureFromJson(jsonResponse);
+        List<Movie> movies = extractMoviesFromJson(jsonResponse);
         cachedJsonImg(movies, context);
 
         return movies;

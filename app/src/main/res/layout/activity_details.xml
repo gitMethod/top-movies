@@ -23,24 +23,24 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/test_product" />
+        app:srcCompat="@drawable/test_product_wide" />
 
     <ImageView
         android:id="@+id/details_image"
         android:layout_width="120dp"
         android:layout_height="180dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:srcCompat="@drawable/test_product"
         app:layout_constraintTop_toTopOf="@+id/details_backdrop"
-        android:layout_marginTop="204dp" />
+        android:layout_marginTop="204dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp" />
 
     <TextView
         android:id="@+id/details_title"
         android:textColor="#f1f1f1"
         android:textSize="24sp"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="120dp"
@@ -50,9 +50,11 @@
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHorizontal_bias="0.666"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/details_image" />
+        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/details_image"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="120dp" />
 
     <TextView
         android:id="@+id/details_release"
@@ -60,10 +62,9 @@
         android:layout_height="wrap_content"
         android:text="release date"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:layout_marginLeft="0dp"
         app:layout_constraintLeft_toLeftOf="@+id/details_rating"
         app:layout_constraintBottom_toBottomOf="@+id/details_image"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="16dp" />
 
     <TextView
         android:id="@+id/details_rating"
@@ -73,26 +74,25 @@
         android:textSize="48sp"
         android:layout_marginLeft="24dp"
         app:layout_constraintLeft_toRightOf="@+id/details_image"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/details_release" />
+        app:layout_constraintBottom_toTopOf="@+id/details_release"
+        android:layout_marginStart="24dp" />
 
     <TextView
         android:id="@+id/details_synopsis"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="48dp"
-        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed ddsfas sadfa. "
-        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginTop="24dp"
+        android:text="Lorem ipsum dolor sit amet, consectetur. "
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/details_image"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="32dp" />
+        android:layout_marginEnd="16dp" />
 
     <TextView
         android:id="@+id/textView"
