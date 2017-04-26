@@ -3,6 +3,8 @@ package com.example.android.moviesudacity;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.HashMap;
+
 public class Movie implements Parcelable {
     private String title;
     private String synopsis;
@@ -10,14 +12,21 @@ public class Movie implements Parcelable {
     private String release;
     private String imgUrl;
     private String backDrop;
+    private String id;
 
-    public Movie(String title, String synopsis, double rating, String release, String imgUrl, String backDrop) {
+    private HashMap<String, String> reviews;
+    private HashMap<String, String> previews;
+
+    public Movie(String title, String synopsis, double rating, String release, String imgUrl, String backDrop, String id) {
         this.title = title;
         this.synopsis = synopsis;
         this.rating = rating;
         this.release = release;
         this.imgUrl = imgUrl;
         this.backDrop = backDrop;
+        this.id = id;
+        this.reviews = new HashMap<>();
+        this.previews = new HashMap<>();
     }
 
     public String getTitle() {
@@ -44,6 +53,18 @@ public class Movie implements Parcelable {
         return backDrop;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public HashMap<String, String> getReviews() {
+        return reviews;
+    }
+
+    public HashMap<String, String> getPreviews() {
+        return previews;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -57,6 +78,9 @@ public class Movie implements Parcelable {
         dest.writeString(release);
         dest.writeString(imgUrl);
         dest.writeString(backDrop);
+        dest.writeString(id);
+        dest.writeMap(reviews);
+        dest.writeMap(previews);
     }
 
     protected Movie(Parcel in) {
@@ -66,6 +90,9 @@ public class Movie implements Parcelable {
         release = in.readString();
         imgUrl = in.readString();
         backDrop = in.readString();
+        id = in.readString();
+        reviews = in.readHashMap(null);
+        previews = in.readHashMap(null);
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
