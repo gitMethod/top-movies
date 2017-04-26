@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 public class networkHelper {
@@ -132,16 +133,15 @@ public class networkHelper {
     }
 
     private static void cachedJsonImages(List<Movie> list, Context context){
+
+
         final CountDownLatch latch = new CountDownLatch(list.size() * 2);
-        Log.e(LOG_TAG, list.size()+"");
         for (int i=0; i<list.size(); i++){
-            Log.e(LOG_TAG, "got the method workingg");
             final Movie movie = list.get(i);
 
             Picasso.with(context).load(movie.getImgUrl()).fetch(new com.squareup.picasso.Callback() {
                 @Override
                 public void onSuccess() {
-                    Log.e(LOG_TAG, "got the imageeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
                     latch.countDown();
                 }
                 @Override
@@ -157,9 +157,30 @@ public class networkHelper {
                 }
                 @Override
                 public void onError() {
-                    Log.d(LOG_TAG, "error fetching image");
+                    Log.e(LOG_TAG, "error fetching image");
                 }
             });
+
+            final CountDownLatch latchChild = new CountDownLatch(movie.getPreviews().size());
+            for (Map.Entry<String, String> entry : movie.getPreviews().entrySet()) {
+                Picasso.with(context).load("http://img.youtube.com/vi/"+entry.getKey()+"/default.jpg")
+                        .fetch(new com.squareup.picasso.Callback() {
+                    @Override
+                    public void onSuccess() {
+                        latchChild.countDown();
+                        Log.d(LOG_TAG, "fetching image");
+                    }
+                    @Override
+                    public void onError() {
+                        Log.d(LOG_TAG, "error fetching image");
+                    }
+                });
+            }
+            try {
+                latchChild.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         try {
             latch.await();
@@ -173,7 +194,7 @@ public class networkHelper {
         List<Movie> movies = extractMoviesInfo(requestUrl, context);
         List<Movie> moviesComplete = appendReviewsVideos( movies, context);
         cachedJsonImages(moviesComplete, context);
-
+        Log.e(LOG_TAG, "not waiting for anyone");
         return moviesComplete;
     }
 
