@@ -59,12 +59,6 @@ public class DetailsActivity extends AppCompatActivity {
 
             ImageView imageView = new ImageView(this);
             Picasso.with(DetailsActivity.this).load("http://img.youtube.com/vi/"+entry.getKey()+"/0.jpg").into(imageView);
-            FrameLayout.LayoutParams layoutParamsImg =
-                    new FrameLayout.LayoutParams
-                            (FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.MATCH_PARENT);
-            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-            imageView.setLayoutParams(layoutParamsImg);
-
             frameLayout.addView(imageView);
 
             ImageView imageViewOverlay = new ImageView(this);
