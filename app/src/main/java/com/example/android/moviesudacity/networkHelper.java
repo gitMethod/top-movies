@@ -161,13 +161,11 @@ public class networkHelper {
                 }
             });
 
-            final CountDownLatch latchChild = new CountDownLatch(movie.getPreviews().size());
             for (Map.Entry<String, String> entry : movie.getPreviews().entrySet()) {
-                Picasso.with(context).load("http://img.youtube.com/vi/"+entry.getKey()+"/default.jpg")
+                Picasso.with(context).load("http://img.youtube.com/vi/"+entry.getKey()+"/mqdefault.jpg")
                         .fetch(new com.squareup.picasso.Callback() {
                     @Override
                     public void onSuccess() {
-                        latchChild.countDown();
                         Log.d(LOG_TAG, "fetching image");
                     }
                     @Override
@@ -175,11 +173,6 @@ public class networkHelper {
                         Log.d(LOG_TAG, "error fetching image");
                     }
                 });
-            }
-            try {
-                latchChild.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
         }
         try {
