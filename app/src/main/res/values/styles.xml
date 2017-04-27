@@ -3,13 +3,13 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/trailerRed</item>
+        <item name="colorPrimaryDark">@color/trailerRedDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <style name="RedAccent" parent="ThemeOverlay.AppCompat.Light">
-        <item name="colorAccent">#7e7e7e</item>
+        <item name="colorAccent">@color/trailerRed</item>
     </style>
 
 </resources>

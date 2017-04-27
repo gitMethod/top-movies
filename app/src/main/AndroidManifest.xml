@@ -20,6 +20,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".DetailsActivity"
+            android:label="Movie details"
             android:parentActivityName="com.example.android.moviesudacity.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

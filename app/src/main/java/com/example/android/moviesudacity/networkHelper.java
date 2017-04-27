@@ -162,7 +162,7 @@ public class networkHelper {
             });
 
             for (Map.Entry<String, String> entry : movie.getPreviews().entrySet()) {
-                Picasso.with(context).load("http://img.youtube.com/vi/"+entry.getKey()+"/mqdefault.jpg")
+                Picasso.with(context).load("http://img.youtube.com/vi/"+entry.getKey()+"/0.jpg")
                         .fetch(new com.squareup.picasso.Callback() {
                     @Override
                     public void onSuccess() {

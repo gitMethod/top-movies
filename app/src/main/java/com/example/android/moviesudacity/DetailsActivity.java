@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -50,32 +49,31 @@ public class DetailsActivity extends AppCompatActivity {
 
 
         LinearLayout layout = (LinearLayout) findViewById(R.id.linear);
-        int id = -1;
         for (final Map.Entry<String, String> entry : clickedMovie.getPreviews().entrySet()) {
 
             FrameLayout frameLayout = new FrameLayout(this);
-            frameLayout.setPadding(4, 4, 4, 4);
+            frameLayout.setPadding(8, 8, 8, 8);
             frameLayout.setLayoutParams(new FrameLayout.LayoutParams
-                    (FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-            frameLayout.setId(id +=1);
+                    (FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.MATCH_PARENT));
             layout.addView(frameLayout);
-            Log.e(LOG_TAG, "the id is " + frameLayout.getId());
 
             ImageView imageView = new ImageView(this);
-            Picasso.with(DetailsActivity.this).load("http://img.youtube.com/vi/"+entry.getKey()+"/mqdefault.jpg").into(imageView);
+            Picasso.with(DetailsActivity.this).load("http://img.youtube.com/vi/"+entry.getKey()+"/0.jpg").into(imageView);
+            FrameLayout.LayoutParams layoutParamsImg =
+                    new FrameLayout.LayoutParams
+                            (FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.MATCH_PARENT);
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            imageView.setLayoutParams(layoutParamsImg);
+
             frameLayout.addView(imageView);
 
             ImageView imageViewOverlay = new ImageView(this);
-
             FrameLayout.LayoutParams layoutParams =
                     new FrameLayout.LayoutParams
                             (FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
             layoutParams.gravity = Gravity.CENTER;
             imageViewOverlay.setLayoutParams(layoutParams);
-
             imageViewOverlay.setImageResource(R.drawable.youtube_play);
-            imageViewOverlay.setScaleType(ImageView.ScaleType.FIT_XY);
             frameLayout.addView(imageViewOverlay);
 
             View.OnClickListener clickListener = new View.OnClickListener() {
