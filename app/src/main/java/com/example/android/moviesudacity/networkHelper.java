@@ -17,7 +17,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 public class networkHelper {
@@ -97,16 +96,17 @@ public class networkHelper {
                                     JSONObject currentReview = movieReviewsArray.getJSONObject(i);
                                     String author = currentReview.getString("author");
                                     String content = currentReview.getString("content");
-                                    movie.getReviews().put(author, content);
+                                    movie.getReviews().add(new MovieReview(author, content));
                                 }
 
                                 JSONObject jsonPreviewsObject = response.getJSONObject("videos");
                                 JSONArray moviePreviewsArray = jsonPreviewsObject.getJSONArray("results");
                                 for (int i = 0; i < moviePreviewsArray.length(); i++) {
                                     JSONObject currentVideo = moviePreviewsArray.getJSONObject(i);
-                                    String id = currentVideo.getString("id");
                                     String key = currentVideo.getString("key");
-                                    movie.getPreviews().put(key, id);
+                                    String name = currentVideo.getString("name");
+                                    String size = currentVideo.getString("id");
+                                    movie.getTrailers().add(new MovieTrailer(key,name,size));
                                 }
 
                                 latch.countDown();
@@ -133,8 +133,6 @@ public class networkHelper {
     }
 
     private static void cachedJsonImages(List<Movie> list, Context context){
-
-
         final CountDownLatch latch = new CountDownLatch(list.size() * 2);
         for (int i=0; i<list.size(); i++){
             final Movie movie = list.get(i);
@@ -161,8 +159,8 @@ public class networkHelper {
                 }
             });
 
-            for (Map.Entry<String, String> entry : movie.getPreviews().entrySet()) {
-                Picasso.with(context).load("http://img.youtube.com/vi/"+entry.getKey()+"/0.jpg")
+            for (MovieTrailer trailer : list.get(i).getTrailers()) {
+                Picasso.with(context).load("http://img.youtube.com/vi/"+trailer.getKey()+"/0.jpg")
                         .fetch(new com.squareup.picasso.Callback() {
                     @Override
                     public void onSuccess() {

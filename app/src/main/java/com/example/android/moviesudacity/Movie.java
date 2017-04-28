@@ -3,7 +3,7 @@ package com.example.android.moviesudacity;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class Movie implements Parcelable {
     private String title;
@@ -14,8 +14,8 @@ public class Movie implements Parcelable {
     private String backDrop;
     private String id;
 
-    private HashMap<String, String> reviews;
-    private HashMap<String, String> previews;
+    private ArrayList<MovieReview> reviews = new ArrayList<MovieReview>();
+    private ArrayList<MovieTrailer> trailers = new ArrayList<MovieTrailer>();
 
     public Movie(String title, String synopsis, double rating, String release, String imgUrl, String backDrop, String id) {
         this.title = title;
@@ -25,8 +25,8 @@ public class Movie implements Parcelable {
         this.imgUrl = imgUrl;
         this.backDrop = backDrop;
         this.id = id;
-        this.reviews = new HashMap<>();
-        this.previews = new HashMap<>();
+        //this.reviews = new ArrayList<MovieReview>();
+        //this.trailers = new ArrayList<MovieTrailer>();
     }
 
     public String getTitle() {
@@ -57,12 +57,12 @@ public class Movie implements Parcelable {
         return id;
     }
 
-    public HashMap<String, String> getReviews() {
+    public ArrayList<MovieReview> getReviews() {
         return reviews;
     }
 
-    public HashMap<String, String> getPreviews() {
-        return previews;
+    public ArrayList<MovieTrailer> getTrailers() {
+        return trailers;
     }
 
     @Override
@@ -79,8 +79,8 @@ public class Movie implements Parcelable {
         dest.writeString(imgUrl);
         dest.writeString(backDrop);
         dest.writeString(id);
-        dest.writeMap(reviews);
-        dest.writeMap(previews);
+        dest.writeTypedList(reviews);
+        dest.writeTypedList(trailers);
     }
 
     protected Movie(Parcel in) {
@@ -91,8 +91,8 @@ public class Movie implements Parcelable {
         imgUrl = in.readString();
         backDrop = in.readString();
         id = in.readString();
-        reviews = in.readHashMap(null);
-        previews = in.readHashMap(null);
+        in.readTypedList(reviews, MovieReview.CREATOR );
+        in.readTypedList(trailers, MovieTrailer.CREATOR );
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {

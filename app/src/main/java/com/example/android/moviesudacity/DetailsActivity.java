@@ -13,8 +13,6 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.Map;
-
 
 public class DetailsActivity extends AppCompatActivity {
     private static final String LOG_TAG = DetailsActivity.class.getSimpleName();
@@ -47,10 +45,8 @@ public class DetailsActivity extends AppCompatActivity {
         rating.setText(Double.toString(clickedMovie.getRating()));
         synopsis.setText(clickedMovie.getSynopsis());
 
-
         LinearLayout layout = (LinearLayout) findViewById(R.id.linear);
-        for (final Map.Entry<String, String> entry : clickedMovie.getPreviews().entrySet()) {
-
+        for (final MovieTrailer trailer : clickedMovie.getTrailers()) {
             FrameLayout frameLayout = new FrameLayout(this);
             frameLayout.setPadding(8, 8, 8, 8);
             frameLayout.setLayoutParams(new FrameLayout.LayoutParams
@@ -58,7 +54,7 @@ public class DetailsActivity extends AppCompatActivity {
             layout.addView(frameLayout);
 
             ImageView imageView = new ImageView(this);
-            Picasso.with(DetailsActivity.this).load("http://img.youtube.com/vi/"+entry.getKey()+"/0.jpg").into(imageView);
+            Picasso.with(DetailsActivity.this).load("http://img.youtube.com/vi/"+trailer.getKey()+"/0.jpg").into(imageView);
             frameLayout.addView(imageView);
 
             ImageView imageViewOverlay = new ImageView(this);
@@ -71,15 +67,38 @@ public class DetailsActivity extends AppCompatActivity {
             frameLayout.addView(imageViewOverlay);
 
             View.OnClickListener clickListener = new View.OnClickListener() {
-
                 public void onClick(View v) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v="+entry.getKey())));
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v="+trailer.getKey())));
                 }
             };
-
             imageView.setOnClickListener(clickListener);
         }
 
+        LinearLayout reviewsContainer = (LinearLayout) findViewById(R.id.details_reviews);
+        for (final MovieReview review : clickedMovie.getReviews()) {
 
+            LinearLayout linearLayout = new LinearLayout(this);
+            LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams
+                    (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            linearLayout.setOrientation(LinearLayout.VERTICAL);
+            linearParams.setMargins(0,0,0,16);
+            linearLayout.setLayoutParams(linearParams);
+            reviewsContainer.addView(linearLayout);
+
+            TextView authorTv = new TextView(this);
+            authorTv.setText(review.getAuthor());
+            linearLayout.addView(authorTv);
+
+            TextView contentTv = new TextView(this);
+            contentTv.setText(review.getContent());
+            linearLayout.addView(contentTv);
+
+            View.OnClickListener clickListener = new View.OnClickListener() {
+                public void onClick(View v) {
+
+                }
+            };
+            linearLayout.setOnClickListener(clickListener);
+        }
     }
 }
