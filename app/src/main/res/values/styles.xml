@@ -12,4 +12,9 @@
         <item name="colorAccent">@color/trailerRed</item>
     </style>
 
+    <style name="CustomBody">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
+        <item name="android:lineSpacingMultiplier">1.15</item>
+    </style>
+
 </resources>

@@ -3,7 +3,9 @@ package com.example.android.moviesudacity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -11,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.squareup.picasso.Picasso;
 
 
@@ -48,7 +51,7 @@ public class DetailsActivity extends AppCompatActivity {
         LinearLayout layout = (LinearLayout) findViewById(R.id.linear);
         for (final MovieTrailer trailer : clickedMovie.getTrailers()) {
             FrameLayout frameLayout = new FrameLayout(this);
-            frameLayout.setPadding(8, 8, 8, 8);
+            frameLayout.setPadding(0, 0, 16, 8);
             frameLayout.setLayoutParams(new FrameLayout.LayoutParams
                     (FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.MATCH_PARENT));
             layout.addView(frameLayout);
@@ -81,20 +84,29 @@ public class DetailsActivity extends AppCompatActivity {
             LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams
                     (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
             linearLayout.setOrientation(LinearLayout.VERTICAL);
-            linearParams.setMargins(0,0,0,16);
+            int marginBottom = (int) (getResources().getDisplayMetrics().density * 24 + 0.5f);
+            linearParams.setMargins(0,0,0,marginBottom);
             linearLayout.setLayoutParams(linearParams);
             reviewsContainer.addView(linearLayout);
 
             TextView authorTv = new TextView(this);
             authorTv.setText(review.getAuthor());
+            TextViewCompat.setTextAppearance( authorTv, R.style.TextAppearance_AppCompat_Subhead);
             linearLayout.addView(authorTv);
 
             TextView contentTv = new TextView(this);
-            contentTv.setText(review.getContent());
+            contentTv.setText(review.getContent().replace("\n\r", ""));
+            TextViewCompat.setTextAppearance( contentTv, R.style.CustomBody);
+            contentTv.setMaxLines(2);
+            contentTv.setEllipsize(TextUtils.TruncateAt.END);
             linearLayout.addView(contentTv);
 
             View.OnClickListener clickListener = new View.OnClickListener() {
                 public void onClick(View v) {
+                    new MaterialDialog.Builder(DetailsActivity.this)
+                            .title(review.getAuthor())
+                            .content(review.getContent())
+                            .show();
 
                 }
             };
