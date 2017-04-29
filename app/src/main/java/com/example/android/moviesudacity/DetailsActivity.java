@@ -3,6 +3,8 @@ package com.example.android.moviesudacity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -25,6 +27,7 @@ public class DetailsActivity extends AppCompatActivity {
     private TextView release;
     private TextView rating;
     private TextView synopsis;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +40,20 @@ public class DetailsActivity extends AppCompatActivity {
         release = (TextView) findViewById(R.id.details_release);
         rating = (TextView) findViewById(R.id.details_rating);
         synopsis = (TextView) findViewById(R.id.details_synopsis);
+        fab = (FloatingActionButton) findViewById(R.id.details_fab);
+
+        fab.setOnClickListener(new View.OnClickListener(){
+            boolean isButtonClicked = false;
+            @Override
+            public void onClick(View v) {
+                isButtonClicked = !isButtonClicked;
+                if(isButtonClicked){
+                    fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_border_white));
+                } else {
+                    fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_white));
+                }
+            }
+        });
 
         Intent intent = getIntent();
         Movie clickedMovie = intent.getParcelableExtra("clickedMovie");
