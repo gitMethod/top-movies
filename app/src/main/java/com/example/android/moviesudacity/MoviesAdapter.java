@@ -2,7 +2,6 @@ package com.example.android.moviesudacity;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,8 +71,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
         public void bindView(int i){
             Picasso.with(mainContext).load(moviesArray.get(i).getImgUrl()).into(posterImage);
-            Log.e(TAG, moviesArray.get(i).getTitle() + "  loaded");
-
         }
 
         @Override

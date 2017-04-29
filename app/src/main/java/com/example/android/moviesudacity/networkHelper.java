@@ -127,7 +127,6 @@ public class networkHelper {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            Log.e(LOG_TAG, "got the infoooooooooooooooooo");
         }
         return movies;
     }
@@ -147,6 +146,7 @@ public class networkHelper {
                     Log.d(LOG_TAG, "error fetching image");
                 }
             });
+
             Picasso.with(context).load(movie.getBackDrop()).fetch();
         }
         try {

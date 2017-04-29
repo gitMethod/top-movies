@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +25,8 @@ import static com.example.android.moviesudacity.R.id.progressBarParent;
 
 public class MainActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<List<Movie>>, MoviesAdapter.ListItemClickListener {
+
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private String MOVIES_URL_POPULAR =
             "https://api.themoviedb.org/3/movie/popular?api_key=dbb539c09bc6d9e2e9e6bf360b705e5b";
@@ -46,35 +49,58 @@ public class MainActivity extends AppCompatActivity implements
         recView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL ));
         recView.setHasFixedSize(true);
 
-        loaderManager = getLoaderManager();
-
         mAdapter = new MoviesAdapter(new ArrayList<Movie>(), this, MainActivity.this);
         recView.setAdapter(mAdapter);
+        loaderManager = getLoaderManager();
 
-        checkInternetAndRun(MOVIES_URL_POPULAR);
+        if(savedInstanceState == null){
+            Log.e(LOG_TAG, "the instance is null");
+            checkInternetAndRun(MOVIES_URL_POPULAR);
+
+        } else {
+            Log.e(LOG_TAG, "the instance is no null");
+            loaderVisibility(false);
+            moviesList = savedInstanceState.getParcelable("savedMovies");
+            mAdapter.swap(moviesList.getList());
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("savedMovies", moviesList);
     }
 
     public void checkInternetAndRun(String url){
         Bundle bundle = new Bundle();
         bundle.putString("url", url);
-
         mAdapter.clear();
-        LinearLayout spinner=(LinearLayout)findViewById(progressBarParent);
-        spinner.setVisibility(View.VISIBLE);
 
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
         if (networkInfo != null && networkInfo.isConnected()) {
             loaderManager.restartLoader(MOVIES_LOADER_ID, bundle, this);
+            loaderVisibility(true);
         } else {
-            View progressBar = findViewById(R.id.progress_bar);
-            progressBar.setVisibility(View.GONE);
-
             TextView progressText = (TextView) findViewById(R.id.progress_text);
             progressText.setText("No internet connection");
         }
-        showMenu = false;
+
+    }
+
+    public void loaderVisibility(boolean status) {
+
+        LinearLayout spinner=(LinearLayout)findViewById(progressBarParent);
+        View progressBar = findViewById(R.id.progress_bar);
+        if(status){
+            spinner.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.VISIBLE);
+        } else {
+            spinner.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
+        }
+        showMenu = !status;
         invalidateOptionsMenu();
     }
 
@@ -114,12 +140,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> data) {
         moviesList = new MoviesList(data);
         mAdapter.swap(moviesList.getList());
-
-        LinearLayout spinner=(LinearLayout)findViewById(progressBarParent);
-        spinner.setVisibility(View.GONE);
-
-        showMenu = true;
-        invalidateOptionsMenu();
+        loaderVisibility(false);
     }
 
     @Override
