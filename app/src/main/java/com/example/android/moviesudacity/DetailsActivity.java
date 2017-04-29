@@ -78,8 +78,16 @@ public class DetailsActivity extends AppCompatActivity {
         }
 
         LinearLayout reviewsContainer = (LinearLayout) findViewById(R.id.details_reviews);
-        for (final MovieReview review : clickedMovie.getReviews()) {
 
+        if (clickedMovie.getReviews().isEmpty()){
+            TextView txvEmpty = new TextView(this);
+            txvEmpty.setText("No review found for this movie");
+            TextViewCompat.setTextAppearance(txvEmpty, R.style.CustomBody);
+            reviewsContainer.addView(txvEmpty);
+        }
+
+
+        for (final MovieReview review : clickedMovie.getReviews()) {
             LinearLayout linearLayout = new LinearLayout(this);
             LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams
                     (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);

@@ -133,7 +133,7 @@ public class networkHelper {
     }
 
     private static void cachedJsonImages(List<Movie> list, Context context){
-        final CountDownLatch latch = new CountDownLatch(list.size() * 2);
+        final CountDownLatch latch = new CountDownLatch(list.size());
         for (int i=0; i<list.size(); i++){
             final Movie movie = list.get(i);
 
@@ -147,31 +147,7 @@ public class networkHelper {
                     Log.d(LOG_TAG, "error fetching image");
                 }
             });
-
-            Picasso.with(context).load(movie.getBackDrop()).fetch(new com.squareup.picasso.Callback() {
-                @Override
-                public void onSuccess() {
-                    latch.countDown();
-                }
-                @Override
-                public void onError() {
-                    Log.e(LOG_TAG, "error fetching image");
-                }
-            });
-
-            for (MovieTrailer trailer : list.get(i).getTrailers()) {
-                Picasso.with(context).load("http://img.youtube.com/vi/"+trailer.getKey()+"/0.jpg")
-                        .fetch(new com.squareup.picasso.Callback() {
-                    @Override
-                    public void onSuccess() {
-                        Log.d(LOG_TAG, "fetching image");
-                    }
-                    @Override
-                    public void onError() {
-                        Log.d(LOG_TAG, "error fetching image");
-                    }
-                });
-            }
+            Picasso.with(context).load(movie.getBackDrop()).fetch();
         }
         try {
             latch.await();
@@ -185,7 +161,6 @@ public class networkHelper {
         List<Movie> movies = extractMoviesInfo(requestUrl, context);
         List<Movie> moviesComplete = appendReviewsVideos( movies, context);
         cachedJsonImages(moviesComplete, context);
-        Log.e(LOG_TAG, "not waiting for anyone");
         return moviesComplete;
     }
 
