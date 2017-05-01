@@ -70,7 +70,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         }
 
         public void bindView(int i){
-            Picasso.with(mainContext).load(moviesArray.get(i).getImgUrl()).into(posterImage);
+            Picasso.with(mainContext).load(moviesArray.get(i).getPosterPath()).into(posterImage);
         }
 
         @Override

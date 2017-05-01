@@ -1,5 +1,6 @@
 package com.example.android.moviesudacity;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.example.android.moviesudacity.data.MoviesContract.MoviesEntry;
 import com.squareup.picasso.Picasso;
 
 
@@ -28,6 +30,7 @@ public class DetailsActivity extends AppCompatActivity {
     private TextView rating;
     private TextView synopsis;
     private FloatingActionButton fab;
+    private Movie clickedMovie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +45,16 @@ public class DetailsActivity extends AppCompatActivity {
         synopsis = (TextView) findViewById(R.id.details_synopsis);
         fab = (FloatingActionButton) findViewById(R.id.details_fab);
 
+        Intent intent = getIntent();
+        clickedMovie = intent.getParcelableExtra("clickedMovie");
+
+        Picasso.with(DetailsActivity.this).load(clickedMovie.getPosterPath()).into(image);
+        Picasso.with(DetailsActivity.this).load(clickedMovie.getBackdropPath()).into(backDrop);
+        title.setText(clickedMovie.getTitle());
+        release.setText(clickedMovie.getReleaseDate());
+        rating.setText(Double.toString(clickedMovie.getVoteAverage()));
+        synopsis.setText(clickedMovie.getOverview());
+
         fab.setOnClickListener(new View.OnClickListener(){
             boolean isButtonClicked = false;
             @Override
@@ -55,16 +68,23 @@ public class DetailsActivity extends AppCompatActivity {
             }
         });
 
-        Intent intent = getIntent();
-        Movie clickedMovie = intent.getParcelableExtra("clickedMovie");
+        generateTrailers();
+        generateReviews();
+    }
 
-        Picasso.with(DetailsActivity.this).load(clickedMovie.getImgUrl()).into(image);
-        Picasso.with(DetailsActivity.this).load(clickedMovie.getBackDrop()).into(backDrop);
-        title.setText(clickedMovie.getTitle());
-        release.setText(clickedMovie.getRelease());
-        rating.setText(Double.toString(clickedMovie.getRating()));
-        synopsis.setText(clickedMovie.getSynopsis());
+    private void insertFavorite(){
+        ContentValues values = new ContentValues();
+        values.put(MoviesEntry.COLUMN_MOVIE_TITLE, clickedMovie.getTitle());
+        values.put(MoviesEntry.COLUMN_MOVIE_OVERVIEW, clickedMovie.getOverview());
+        values.put(MoviesEntry.COLUMN_MOVIE_VOTE_AVERAGE, clickedMovie.getVoteAverage());
+        values.put(MoviesEntry.COLUMN_MOVIE_RELEASE_DATE, clickedMovie.getReleaseDate());
+        values.put(MoviesEntry.COLUMN_MOVIE_POSTER_PATH, clickedMovie.getPosterPath());
+        values.put(MoviesEntry.COLUMN_MOVIE_BACKDROP_PATH, clickedMovie.getBackdropPath());
+        values.put(MoviesEntry.COLUMN_MOVIE_ID, clickedMovie.getId());
+        Uri newUri = getContentResolver().insert(MoviesEntry.CONTENT_URI, values);
+    }
 
+    private void generateTrailers(){
         LinearLayout layout = (LinearLayout) findViewById(R.id.linear);
         for (final MovieTrailer trailer : clickedMovie.getTrailers()) {
             FrameLayout frameLayout = new FrameLayout(this);
@@ -94,6 +114,9 @@ public class DetailsActivity extends AppCompatActivity {
             imageView.setOnClickListener(clickListener);
         }
 
+    }
+
+    private void generateReviews(){
         LinearLayout reviewsContainer = (LinearLayout) findViewById(R.id.details_reviews);
 
         if (clickedMovie.getReviews().isEmpty()){
@@ -102,7 +125,6 @@ public class DetailsActivity extends AppCompatActivity {
             TextViewCompat.setTextAppearance(txvEmpty, R.style.CustomBody);
             reviewsContainer.addView(txvEmpty);
         }
-
 
         for (final MovieReview review : clickedMovie.getReviews()) {
             LinearLayout linearLayout = new LinearLayout(this);
@@ -132,10 +154,10 @@ public class DetailsActivity extends AppCompatActivity {
                             .title(review.getAuthor())
                             .content(review.getContent())
                             .show();
-
                 }
             };
             linearLayout.setOnClickListener(clickListener);
         }
+
     }
 }

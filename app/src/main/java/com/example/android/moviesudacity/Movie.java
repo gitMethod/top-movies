@@ -7,23 +7,23 @@ import java.util.ArrayList;
 
 public class Movie implements Parcelable {
     private String title;
-    private String synopsis;
-    private double rating;
-    private String release;
-    private String imgUrl;
-    private String backDrop;
+    private String overview;
+    private double voteAverage;
+    private String releaseDate;
+    private String posterPath;
+    private String backdropPath;
     private String id;
 
     private ArrayList<MovieReview> reviews = new ArrayList<MovieReview>();
     private ArrayList<MovieTrailer> trailers = new ArrayList<MovieTrailer>();
 
-    public Movie(String title, String synopsis, double rating, String release, String imgUrl, String backDrop, String id) {
+    public Movie(String title, String overview, double voteAverage, String releaseDate, String posterPath, String backdropPath, String id) {
         this.title = title;
-        this.synopsis = synopsis;
-        this.rating = rating;
-        this.release = release;
-        this.imgUrl = imgUrl;
-        this.backDrop = backDrop;
+        this.overview = overview;
+        this.voteAverage = voteAverage;
+        this.releaseDate = releaseDate;
+        this.posterPath = posterPath;
+        this.backdropPath = backdropPath;
         this.id = id;
         //this.reviews = new ArrayList<MovieReview>();
         //this.trailers = new ArrayList<MovieTrailer>();
@@ -33,24 +33,24 @@ public class Movie implements Parcelable {
         return title;
     }
 
-    public String getSynopsis() {
-        return synopsis;
+    public String getOverview() {
+        return overview;
     }
 
-    public double getRating() {
-        return rating;
+    public double getVoteAverage() {
+        return voteAverage;
     }
 
-    public String getRelease() {
-        return release;
+    public String getReleaseDate() {
+        return releaseDate;
     }
 
-    public String getImgUrl() {
-        return imgUrl;
+    public String getPosterPath() {
+        return posterPath;
     }
 
-    public String getBackDrop() {
-        return backDrop;
+    public String getBackdropPath() {
+        return backdropPath;
     }
 
     public String getId() {
@@ -73,11 +73,11 @@ public class Movie implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(title);
-        dest.writeString(synopsis);
-        dest.writeDouble(rating);
-        dest.writeString(release);
-        dest.writeString(imgUrl);
-        dest.writeString(backDrop);
+        dest.writeString(overview);
+        dest.writeDouble(voteAverage);
+        dest.writeString(releaseDate);
+        dest.writeString(posterPath);
+        dest.writeString(backdropPath);
         dest.writeString(id);
         dest.writeTypedList(reviews);
         dest.writeTypedList(trailers);
@@ -85,11 +85,11 @@ public class Movie implements Parcelable {
 
     protected Movie(Parcel in) {
         title = in.readString();
-        synopsis = in.readString();
-        rating = in.readDouble();
-        release = in.readString();
-        imgUrl = in.readString();
-        backDrop = in.readString();
+        overview = in.readString();
+        voteAverage = in.readDouble();
+        releaseDate = in.readString();
+        posterPath = in.readString();
+        backdropPath = in.readString();
         id = in.readString();
         in.readTypedList(reviews, MovieReview.CREATOR );
         in.readTypedList(trailers, MovieTrailer.CREATOR );

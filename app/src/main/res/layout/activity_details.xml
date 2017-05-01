@@ -61,7 +61,7 @@
         android:id="@+id/details_release"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="release date"
+        android:text="releaseDate date"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         app:layout_constraintLeft_toLeftOf="@+id/details_rating"
         app:layout_constraintTop_toBottomOf="@+id/details_rating" />
@@ -177,7 +177,7 @@
         android:id="@+id/details_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/trailerRed"
+        app:backgroundTint="@color/trailerRed"
         android:src="@drawable/ic_favorite_white"
         android:layout_marginRight="24dp"
         app:layout_constraintRight_toRightOf="parent"

@@ -136,7 +136,7 @@ public class networkHelper {
         for (int i=0; i<list.size(); i++){
             final Movie movie = list.get(i);
 
-            Picasso.with(context).load(movie.getImgUrl()).fetch(new com.squareup.picasso.Callback() {
+            Picasso.with(context).load(movie.getPosterPath()).fetch(new com.squareup.picasso.Callback() {
                 @Override
                 public void onSuccess() {
                     latch.countDown();
@@ -147,7 +147,7 @@ public class networkHelper {
                 }
             });
 
-            Picasso.with(context).load(movie.getBackDrop()).fetch();
+            Picasso.with(context).load(movie.getBackdropPath()).fetch();
         }
         try {
             latch.await();

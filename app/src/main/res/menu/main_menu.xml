@@ -7,11 +7,15 @@
 
     <item
         android:id="@+id/action_rating"
-        android:title="by rating"
+        android:title="by voteAverage"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_popularity"
         android:title="by popularity"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_favorites"
+        android:title="by favorites"
         app:showAsAction="never" />
 </menu>

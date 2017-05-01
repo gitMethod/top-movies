@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -126,6 +127,8 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.action_rating:
                 checkInternetAndRun(MOVIES_URL_RATING);
                 return true;
+            case R.id.action_favorites:
+                Toast.makeText(this, "favorites clicked", Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
     }
