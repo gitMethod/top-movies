@@ -28,22 +28,7 @@ public class MoviesDbHelper extends SQLiteOpenHelper{
                 + MoviesEntry.COLUMN_MOVIE_BACKDROP_PATH + " TEXT, "
                 + MoviesEntry.COLUMN_MOVIE_ID + " TEXT );";
 
-        /*String SQL_CREATE_VIDEO_TABLE =  "CREATE TABLE " + VideosEntry.TABLE_NAME + " ("
-                + VideosEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + VideosEntry.COLUMN_VIDEO_KEY + " TEXT NOT NULL, "
-                + VideosEntry.COLUMN_VIDEO_NAME + " TEXT, "
-                + VideosEntry.COLUMN_VIDEO_SIZE + " TEXT, "
-                + VideosEntry.COLUMN_FK_MOVIE_ID + " INTEGER ); ";
-
-        String SQL_CREATE_REVIEW_TABLE =  "CREATE TABLE " + ReviewEntry.TABLE_NAME + " ("
-                + ReviewEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + ReviewEntry.COLUMN_REVIEW_AUTHOR + " TEXT NOT NULL, "
-                + ReviewEntry.COLUMN_REVIEW_CONTENT + " TEXT, "
-                + ReviewEntry.COLUMN_FK_MOVIE_ID + " INTEGER ); ";*/
-
         db.execSQL(SQL_CREATE_MOVIE_TABLE);
-        //db.execSQL(SQL_CREATE_VIDEO_TABLE);
-        //db.execSQL(SQL_CREATE_REVIEW_TABLE);
     }
 
     @Override

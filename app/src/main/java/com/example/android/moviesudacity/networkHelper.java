@@ -39,10 +39,10 @@ public class networkHelper {
                             movieInfoArray = response.getJSONArray("results");
                             for (int i=0; i<movieInfoArray.length(); i++){
                                 JSONObject currentMovie = movieInfoArray.getJSONObject(i);
-                                String imageUrl = currentMovie.getString("poster_path");
-                                String wholeUrlImage = BASE_IMAGE_URL + BASE_IMAGE_SIZE + imageUrl;
-                                String backDrop = currentMovie.getString("backdrop_path");
-                                String wholeUrlBackdrop = BASE_IMAGE_URL + BASE_BACKDROP_SIZE + backDrop;
+                                String posterPath = currentMovie.getString("poster_path");
+                                String wholeUrlImage = BASE_IMAGE_URL + BASE_IMAGE_SIZE + posterPath;
+                                String backDropPath = currentMovie.getString("backdrop_path");
+                                String wholeUrlBackdrop = BASE_IMAGE_URL + BASE_BACKDROP_SIZE + backDropPath;
                                 String title = currentMovie.getString("title");
                                 String synopsis = currentMovie.getString("overview");
                                 double rating = currentMovie.getDouble("vote_average");
@@ -157,7 +157,6 @@ public class networkHelper {
     }
 
     public static List<Movie> moviesData(String requestUrl, Context context) {
-
         List<Movie> movies = extractMoviesInfo(requestUrl, context);
         List<Movie> moviesComplete = appendReviewsVideos( movies, context);
         cachedJsonImages(moviesComplete, context);

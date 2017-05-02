@@ -33,6 +33,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
     }
 
     public void swap(List<Movie> data){
+        moviesArray.clear();
         moviesArray.addAll(data);
         notifyDataSetChanged();
     }
