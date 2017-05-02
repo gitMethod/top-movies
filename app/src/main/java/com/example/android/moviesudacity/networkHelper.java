@@ -25,9 +25,9 @@ public class networkHelper {
     private static final String BASE_IMAGE_SIZE = "w185/";
     private static final String BASE_BACKDROP_SIZE = "w500/";
 
-    private static List<Movie> extractMoviesInfo(String url, Context context){
+    private static List<String> extractMoviesIds(String url, Context context){
         final CountDownLatch latch = new CountDownLatch(1);
-        final List<Movie> movies = new ArrayList<>();
+        final List<String> moviesIds = new ArrayList<>();
 
         RequestQueue queue = Volley.newRequestQueue(context);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
@@ -39,18 +39,8 @@ public class networkHelper {
                             movieInfoArray = response.getJSONArray("results");
                             for (int i=0; i<movieInfoArray.length(); i++){
                                 JSONObject currentMovie = movieInfoArray.getJSONObject(i);
-                                String posterPath = currentMovie.getString("poster_path");
-                                String wholeUrlImage = BASE_IMAGE_URL + BASE_IMAGE_SIZE + posterPath;
-                                String backDropPath = currentMovie.getString("backdrop_path");
-                                String wholeUrlBackdrop = BASE_IMAGE_URL + BASE_BACKDROP_SIZE + backDropPath;
-                                String title = currentMovie.getString("title");
-                                String synopsis = currentMovie.getString("overview");
-                                double rating = currentMovie.getDouble("vote_average");
-                                String release = currentMovie.getString("release_date");
                                 String id = currentMovie.getString("id");
-
-                                Movie movie = new Movie(title, synopsis, rating, release, wholeUrlImage, wholeUrlBackdrop, id);
-                                movies.add(movie);
+                                moviesIds.add(id);
                             }
                             latch.countDown();
                         } catch (JSONException e) {
@@ -70,26 +60,36 @@ public class networkHelper {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return movies;
+        return moviesIds;
     }
 
-    private static List<Movie> appendReviewsVideos(List<Movie> list, Context context){
-        final CountDownLatch latch = new CountDownLatch(1);
-        final List<Movie> movies = list;
-
+    private static List<Movie> extractMoviesInfo(List<String> list, Context context){
+        final CountDownLatch latch = new CountDownLatch(list.size());
+        final List<Movie> movies = new ArrayList<>();
         RequestQueue queue = Volley.newRequestQueue(context);
 
         for (int i=0; i<list.size(); i++) {
-            final Movie movie = list.get(i);
-            String movieId = movie.getId();
-            String url =
-                    "https://api.themoviedb.org/3/movie/"+movieId+
+            String movieId = list.get(i);
+            String url = "https://api.themoviedb.org/3/movie/"+movieId+
                             "?api_key=dbb539c09bc6d9e2e9e6bf360b705e5b&append_to_response=reviews,videos";
             JsonObjectRequest jsObjRequest = new JsonObjectRequest
                     (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response){
                             try {
+                                String posterPath = response.getString("poster_path");
+                                String wholeUrlImage = BASE_IMAGE_URL + BASE_IMAGE_SIZE + posterPath;
+                                String backDropPath = response.getString("backdrop_path");
+                                String wholeUrlBackdrop = BASE_IMAGE_URL + BASE_BACKDROP_SIZE + backDropPath;
+                                String title = response.getString("title");
+                                String synopsis = response.getString("overview");
+                                double rating = response.getDouble("vote_average");
+                                String release = response.getString("release_date");
+                                String id = response.getString("id");
+
+                                Movie movie = new Movie(title, synopsis, rating, release, wholeUrlImage, wholeUrlBackdrop, id);
+                                movies.add(movie);
+
                                 JSONObject jsonReviewObject = response.getJSONObject("reviews");
                                 JSONArray movieReviewsArray = jsonReviewObject.getJSONArray("results");
                                 for (int i = 0; i < movieReviewsArray.length(); i++) {
@@ -108,7 +108,6 @@ public class networkHelper {
                                     String size = currentVideo.getString("id");
                                     movie.getTrailers().add(new MovieTrailer(key,name,size));
                                 }
-
                                 latch.countDown();
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -122,16 +121,16 @@ public class networkHelper {
                         }
                     });
             queue.add(jsObjRequest);
-            try {
-                latch.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        }
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         return movies;
     }
 
-    private static void cachedJsonImages(List<Movie> list, Context context){
+    private static void cacheJsonImages(List<Movie> list, Context context){
         final CountDownLatch latch = new CountDownLatch(list.size());
         for (int i=0; i<list.size(); i++){
             final Movie movie = list.get(i);
@@ -146,7 +145,6 @@ public class networkHelper {
                     Log.d(LOG_TAG, "error fetching image");
                 }
             });
-
             Picasso.with(context).load(movie.getBackdropPath()).fetch();
         }
         try {
@@ -157,10 +155,10 @@ public class networkHelper {
     }
 
     public static List<Movie> moviesData(String requestUrl, Context context) {
-        List<Movie> movies = extractMoviesInfo(requestUrl, context);
-        List<Movie> moviesComplete = appendReviewsVideos( movies, context);
-        cachedJsonImages(moviesComplete, context);
-        return moviesComplete;
+        List<String> moviesIds = extractMoviesIds(requestUrl, context);
+        List<Movie> movies = extractMoviesInfo(moviesIds, context);
+        cacheJsonImages(movies, context);
+        return movies;
     }
 
 
