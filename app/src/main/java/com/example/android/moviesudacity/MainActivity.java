@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements
     private LoaderManager.LoaderCallbacks<List<Movie>> networkLoader;
     private LoaderManager.LoaderCallbacks<Cursor> persistLoader;
     private MoviesDbHelper moviesDbHelper;
+    private ArrayList<String> moviesIds;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,22 +65,25 @@ public class MainActivity extends AppCompatActivity implements
         networkLoader = new LoaderManager.LoaderCallbacks<List<Movie>>() {
             @Override
             public Loader<List<Movie>> onCreateLoader(int id, Bundle args) {
-                return new MovieLoader(MainActivity.this, args.getString("url"));
+                String url = args.getString("url");
+                ArrayList<String> moviesIds = args.getStringArrayList("ids");
+                if( url == null){
+                    return new MovieLoader(MainActivity.this, moviesIds);
+                } else {
+                    return new MovieLoader(MainActivity.this, url);
+                }
             }
             @Override
             public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> data) {
                 moviesList = new MoviesList(data);
                 mAdapter.swap(moviesList.getList());
                 progressBarVisibility(false);
-
             }
             @Override
-            public void onLoaderReset(Loader<List<Movie>> loader) {
-            }
+            public void onLoaderReset(Loader<List<Movie>> loader) {}
         };
 
         persistLoader = new LoaderManager.LoaderCallbacks<Cursor>(){
-
             @Override
             public Loader<Cursor> onCreateLoader(int id, Bundle args) {
                 String[] projection = {
@@ -100,23 +104,24 @@ public class MainActivity extends AppCompatActivity implements
                 while(data.moveToNext()) {
                     favoriteIds.add(data.getString(columnIndex));
                 }
-                Log.e(LOG_TAG, "sdfjsaldkfdddddddddddddddddddddddddddddddddddddddddddddddddd  the lenght is " + favoriteIds.size() );
+                moviesIds = favoriteIds;
+                runLoader(null, moviesIds);
             }
             @Override
-            public void onLoaderReset(Loader<Cursor> loader) {
-
-            }
+            public void onLoaderReset(Loader<Cursor> loader) {}
         };
 
+        loaderManager.restartLoader(PERSIST_LOADER_ID, null, persistLoader);
+
         if(savedInstanceState == null){
-            Log.e(LOG_TAG, "the instance is null");
-            runLoader(MOVIES_URL_POPULAR);
+            runLoader(MOVIES_URL_POPULAR, null);
 
         } else {
-            Log.e(LOG_TAG, "the instance is no null");
             progressBarVisibility(false);
             moviesList = savedInstanceState.getParcelable("savedMovies");
             mAdapter.swap(moviesList.getList());
+            runLoader(null, moviesIds);
+
         }
     }
 
@@ -126,10 +131,11 @@ public class MainActivity extends AppCompatActivity implements
         outState.putParcelable("savedMovies", moviesList);
     }
 
-    public void runLoader(String url){
+    public void runLoader(String url, ArrayList<String> moviesIds){
         mAdapter.clear();
         Bundle bundle = new Bundle();
         bundle.putString("url", url);
+        bundle.putStringArrayList("ids", moviesIds);
 
         if(checkConnection()) {
             loaderManager.restartLoader(NETWORK_LOADER_ID, bundle, networkLoader);
@@ -171,22 +177,36 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_popularity:
-                runLoader(MOVIES_URL_POPULAR);
+                runLoader(MOVIES_URL_POPULAR, null);
+                getSupportActionBar().setTitle("Top 25 by popularity");
                 return true;
             case R.id.action_rating:
-                runLoader(MOVIES_URL_RATING);
+                runLoader(MOVIES_URL_RATING, null);
+                getSupportActionBar().setTitle("Top 25 by rating");
                 return true;
             case R.id.action_favorites:
                 loaderManager.restartLoader(PERSIST_LOADER_ID, null, persistLoader);
+                getSupportActionBar().setTitle("My favorites");
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void onListItemClick(Movie movie) {
+    public void onListItemClick(Movie movie, int position) {
         Intent intent = new Intent(this, DetailsActivity.class);
+        markFavorite(movie);
         intent.putExtra("clickedMovie", movie);
+        intent.putExtra("position", position);
         startActivity(intent);
+    }
+
+    public void markFavorite(Movie movie){
+        for (int i=0; i<moviesIds.size(); i++){
+            if(moviesIds.get(i).equals(movie.getId())){
+                movie.setFavorite(true);
+                return;
+            }
+        }
     }
 }
 

@@ -14,7 +14,7 @@ import java.util.List;
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder> {
 
     public interface ListItemClickListener {
-        void onListItemClick(Movie movie);
+        void onListItemClick(Movie movie, int position);
     }
 
     final private ListItemClickListener mOnClickListener;
@@ -78,7 +78,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         public void onClick(View v) {
             int clickedPosition = getAdapterPosition();
             Movie movie = moviesArray.get(clickedPosition);
-            mOnClickListener.onListItemClick(movie);
+            mOnClickListener.onListItemClick(movie, clickedPosition);
         }
     }
 }

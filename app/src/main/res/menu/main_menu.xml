@@ -7,7 +7,7 @@
 
     <item
         android:id="@+id/action_rating"
-        android:title="by voteAverage"
+        android:title="by rating"
         app:showAsAction="never" />
 
     <item

@@ -13,6 +13,7 @@ public class Movie implements Parcelable {
     private String posterPath;
     private String backdropPath;
     private String id;
+    private boolean favorite;
 
     private ArrayList<MovieReview> reviews = new ArrayList<MovieReview>();
     private ArrayList<MovieTrailer> trailers = new ArrayList<MovieTrailer>();
@@ -21,12 +22,12 @@ public class Movie implements Parcelable {
         this.title = title;
         this.overview = overview;
         this.voteAverage = voteAverage;
+
         this.releaseDate = releaseDate;
         this.posterPath = posterPath;
         this.backdropPath = backdropPath;
         this.id = id;
-        //this.reviews = new ArrayList<MovieReview>();
-        //this.trailers = new ArrayList<MovieTrailer>();
+        this.favorite = false;
     }
 
     public String getTitle() {
@@ -57,6 +58,14 @@ public class Movie implements Parcelable {
         return id;
     }
 
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
+    }
+
     public ArrayList<MovieReview> getReviews() {
         return reviews;
     }
@@ -81,6 +90,7 @@ public class Movie implements Parcelable {
         dest.writeString(id);
         dest.writeTypedList(reviews);
         dest.writeTypedList(trailers);
+        dest.writeInt(favorite ? 1 : 0);
     }
 
     protected Movie(Parcel in) {
@@ -93,6 +103,7 @@ public class Movie implements Parcelable {
         id = in.readString();
         in.readTypedList(reviews, MovieReview.CREATOR );
         in.readTypedList(trailers, MovieTrailer.CREATOR );
+        favorite = in.readInt() != 0;
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {

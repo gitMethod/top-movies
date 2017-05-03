@@ -1,5 +1,6 @@
 package com.example.android.moviesudacity;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
@@ -15,6 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.android.moviesudacity.data.MoviesContract.MoviesEntry;
@@ -31,6 +33,7 @@ public class DetailsActivity extends AppCompatActivity {
     private TextView synopsis;
     private FloatingActionButton fab;
     private Movie clickedMovie;
+    private int moviePosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +50,7 @@ public class DetailsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         clickedMovie = intent.getParcelableExtra("clickedMovie");
+        moviePosition = intent.getIntExtra("position", -1);
 
         Picasso.with(DetailsActivity.this).load(clickedMovie.getPosterPath()).into(image);
         Picasso.with(DetailsActivity.this).load(clickedMovie.getBackdropPath()).into(backDrop);
@@ -54,16 +58,15 @@ public class DetailsActivity extends AppCompatActivity {
         release.setText(clickedMovie.getReleaseDate());
         rating.setText(Double.toString(clickedMovie.getVoteAverage()));
         synopsis.setText(clickedMovie.getOverview());
+        updateFavIcon();
+
 
         fab.setOnClickListener(new View.OnClickListener(){
-            boolean isButtonClicked = false;
             @Override
             public void onClick(View v) {
-                isButtonClicked = !isButtonClicked;
-                if(isButtonClicked){
-                    fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_border_white));
+                if(clickedMovie.isFavorite()){
+                    deleteFavorite();
                 } else {
-                    fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_white));
                     insertFavorite();
                 }
             }
@@ -73,10 +76,38 @@ public class DetailsActivity extends AppCompatActivity {
         generateReviews();
     }
 
+    private void updateFavIcon(){
+        if(clickedMovie.isFavorite()){
+            fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_white));
+        } else {
+            fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_border_white));
+        }
+    }
+
     private void insertFavorite(){
         ContentValues values = new ContentValues();
         values.put(MoviesEntry.COLUMN_MOVIE_ID, clickedMovie.getId());
-        Uri newUri = getContentResolver().insert(MoviesEntry.CONTENT_URI, values);
+        getContentResolver().insert(MoviesEntry.CONTENT_URI, values);
+        clickedMovie.setFavorite(true);
+        updateFavIcon();
+    }
+
+    private void deleteFavorite(){
+        Uri currentUri = ContentUris.withAppendedId(MoviesEntry.CONTENT_URI, moviePosition);
+        Toast.makeText(this, currentUri+"", Toast.LENGTH_SHORT).show();
+        int rowsDeleted = getContentResolver().delete(currentUri, null, null);
+
+        if (rowsDeleted == 0) {
+            Toast.makeText(this, "Delete pet failed",
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Delete movie success",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        clickedMovie.setFavorite(false);
+        updateFavIcon();
+
     }
 
 
