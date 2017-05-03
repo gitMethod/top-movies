@@ -1,6 +1,5 @@
 package com.example.android.moviesudacity.data;
 
-
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -91,23 +90,31 @@ public class MoviesProvider extends ContentProvider{
             Log.e(LOG_TAG, "Failed to insert row for " + uri);
             return null;
         }
+        getContext().getContentResolver().notifyChange(uri, null);
         return ContentUris.withAppendedId(uri, id);
     }
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
         SQLiteDatabase sqLiteDatabase = mDbHelper.getWritableDatabase();
+        int rowsDeleted;
         final int match = sUriMatcher.match(uri);
         switch (match){
             case MOVIES:
-                return sqLiteDatabase.delete(MoviesContract.MoviesEntry.TABLE_NAME, selection, selectionArgs);
+                rowsDeleted = sqLiteDatabase.delete(MoviesContract.MoviesEntry.TABLE_NAME, selection, selectionArgs);
+                break;
             case MOVIE_ID:
                 selection = MoviesContract.MoviesEntry._ID + "=?";
                 selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
-                return sqLiteDatabase.delete(MoviesContract.MoviesEntry.TABLE_NAME, selection, selectionArgs);
+                rowsDeleted = sqLiteDatabase.delete(MoviesContract.MoviesEntry.TABLE_NAME, selection, selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Deletion is not supported for " + uri);
         }
+        if (rowsDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsDeleted;
     }
 
     @Override

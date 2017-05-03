@@ -19,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.android.moviesudacity.data.MoviesContract;
 import com.example.android.moviesudacity.data.MoviesDbHelper;
@@ -31,7 +30,6 @@ import static com.example.android.moviesudacity.R.id.progressBarParent;
 
 public class MainActivity extends AppCompatActivity implements
          MoviesAdapter.ListItemClickListener {
-
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -88,7 +86,6 @@ public class MainActivity extends AppCompatActivity implements
                         MoviesContract.MoviesEntry._ID,
                         MoviesContract.MoviesEntry.COLUMN_MOVIE_ID
                 };
-
                 return new CursorLoader(MainActivity.this,
                         MoviesContract.MoviesEntry.CONTENT_URI,
                         projection,
@@ -96,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements
                         null,
                         null);
             }
-
             @Override
             public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
                 ArrayList<String> favoriteIds = new ArrayList<>();
@@ -104,8 +100,8 @@ public class MainActivity extends AppCompatActivity implements
                 while(data.moveToNext()) {
                     favoriteIds.add(data.getString(columnIndex));
                 }
+                Log.e(LOG_TAG, "sdfjsaldkfdddddddddddddddddddddddddddddddddddddddddddddddddd  the lenght is " + favoriteIds.size() );
             }
-
             @Override
             public void onLoaderReset(Loader<Cursor> loader) {
 
@@ -181,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements
                 runLoader(MOVIES_URL_RATING);
                 return true;
             case R.id.action_favorites:
-                Toast.makeText(this, "favorites clicked", Toast.LENGTH_SHORT).show();
+                loaderManager.restartLoader(PERSIST_LOADER_ID, null, persistLoader);
         }
         return super.onOptionsItemSelected(item);
     }

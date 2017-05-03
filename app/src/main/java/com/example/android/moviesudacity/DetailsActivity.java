@@ -64,6 +64,7 @@ public class DetailsActivity extends AppCompatActivity {
                     fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_border_white));
                 } else {
                     fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_white));
+                    insertFavorite();
                 }
             }
         });
@@ -77,6 +78,7 @@ public class DetailsActivity extends AppCompatActivity {
         values.put(MoviesEntry.COLUMN_MOVIE_ID, clickedMovie.getId());
         Uri newUri = getContentResolver().insert(MoviesEntry.CONTENT_URI, values);
     }
+
 
     private void generateTrailers(){
         LinearLayout layout = (LinearLayout) findViewById(R.id.linear);
