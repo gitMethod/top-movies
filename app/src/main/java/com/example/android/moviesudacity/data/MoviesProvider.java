@@ -19,17 +19,17 @@ public class MoviesProvider extends ContentProvider{
     private static final int MOVIE_ID = 101;
     private static final UriMatcher sUriMatcher = buildMatcher();
 
+    @Override
+    public boolean onCreate() {
+        mDbHelper = new MoviesDbHelper(getContext());
+        return true;
+    }
+
     public static UriMatcher buildMatcher(){
         UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         sUriMatcher.addURI(MoviesContract.CONTENT_AUTHORITY, MoviesContract.PATH_MOVIES, MOVIES);
         sUriMatcher.addURI(MoviesContract.CONTENT_AUTHORITY, MoviesContract.PATH_MOVIES +"/#", MOVIE_ID);
         return sUriMatcher;
-    }
-
-    @Override
-    public boolean onCreate() {
-        mDbHelper = new MoviesDbHelper(getContext());
-        return true;
     }
 
     @Nullable
@@ -78,7 +78,7 @@ public class MoviesProvider extends ContentProvider{
         final int match = sUriMatcher.match(uri);
         switch (match){
             case MOVIES:
-                return insert(uri, values);
+                return insertMovie(uri, values);
             default:
                 throw new IllegalArgumentException("Insertion is not supported for " + uri);
         }

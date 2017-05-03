@@ -74,12 +74,6 @@ public class DetailsActivity extends AppCompatActivity {
 
     private void insertFavorite(){
         ContentValues values = new ContentValues();
-        values.put(MoviesEntry.COLUMN_MOVIE_TITLE, clickedMovie.getTitle());
-        values.put(MoviesEntry.COLUMN_MOVIE_OVERVIEW, clickedMovie.getOverview());
-        values.put(MoviesEntry.COLUMN_MOVIE_VOTE_AVERAGE, clickedMovie.getVoteAverage());
-        values.put(MoviesEntry.COLUMN_MOVIE_RELEASE_DATE, clickedMovie.getReleaseDate());
-        values.put(MoviesEntry.COLUMN_MOVIE_POSTER_PATH, clickedMovie.getPosterPath());
-        values.put(MoviesEntry.COLUMN_MOVIE_BACKDROP_PATH, clickedMovie.getBackdropPath());
         values.put(MoviesEntry.COLUMN_MOVIE_ID, clickedMovie.getId());
         Uri newUri = getContentResolver().insert(MoviesEntry.CONTENT_URI, values);
     }
