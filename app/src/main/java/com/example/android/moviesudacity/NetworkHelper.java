@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-public class networkHelper {
-    private static final String LOG_TAG = networkHelper.class.getSimpleName();
+public class NetworkHelper {
+    private static final String LOG_TAG = NetworkHelper.class.getSimpleName();
     private static final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
     private static final String BASE_IMAGE_SIZE = "w185/";
     private static final String BASE_BACKDROP_SIZE = "w500/";

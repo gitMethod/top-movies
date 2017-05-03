@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements
     private MoviesAdapter mAdapter;
     private RecyclerView recView;
     private MoviesList moviesList;
-    private boolean showMenu;
     private LoaderManager loaderManager;
     private LoaderManager.LoaderCallbacks<List<Movie>> networkLoader;
     private LoaderManager.LoaderCallbacks<Cursor> persistLoader;
@@ -73,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements
             public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> data) {
                 moviesList = new MoviesList(data);
                 mAdapter.swap(moviesList.getList());
-                loaderVisibility(false);
+                progressBarVisibility(false);
 
             }
             @Override
@@ -105,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements
                 while(data.moveToNext()) {
                     favoriteIds.add(data.getString(columnIndex));
                 }
-
             }
 
             @Override
@@ -116,11 +114,11 @@ public class MainActivity extends AppCompatActivity implements
 
         if(savedInstanceState == null){
             Log.e(LOG_TAG, "the instance is null");
-            checkInternetAndRun(MOVIES_URL_POPULAR);
+            runLoader(MOVIES_URL_POPULAR);
 
         } else {
             Log.e(LOG_TAG, "the instance is no null");
-            loaderVisibility(false);
+            progressBarVisibility(false);
             moviesList = savedInstanceState.getParcelable("savedMovies");
             mAdapter.swap(moviesList.getList());
         }
@@ -132,24 +130,30 @@ public class MainActivity extends AppCompatActivity implements
         outState.putParcelable("savedMovies", moviesList);
     }
 
-    public void checkInternetAndRun(String url){
+    public void runLoader(String url){
+        mAdapter.clear();
         Bundle bundle = new Bundle();
         bundle.putString("url", url);
 
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if (networkInfo != null && networkInfo.isConnected()) {
+        if(checkConnection()) {
             loaderManager.restartLoader(NETWORK_LOADER_ID, bundle, networkLoader);
-            loaderVisibility(true);
-        } else {
-            TextView progressText = (TextView) findViewById(R.id.progress_text);
-            progressText.setText("No internet connection");
+            progressBarVisibility(true);
         }
-
     }
 
-    public void loaderVisibility(boolean status) {
+    public boolean checkConnection(){
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()){
+            return true;
+        }
+        TextView progressText = (TextView) findViewById(R.id.progress_text);
+        progressText.setText("No internet connection");
+        progressBarVisibility(true);
+        return false;
+    }
+
+    public void progressBarVisibility(boolean status) {
         LinearLayout spinner =(LinearLayout)findViewById(progressBarParent);
         View progressBar = findViewById(R.id.progress_bar);
         if(status){
@@ -159,20 +163,11 @@ public class MainActivity extends AppCompatActivity implements
             spinner.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);
         }
-        showMenu = !status;
-        invalidateOptionsMenu();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
-        if(!showMenu){
-            menu.findItem(R.id.action_rating).setVisible(false);
-            menu.findItem(R.id.action_popularity).setVisible(false);
-        } else {
-            menu.findItem(R.id.action_rating).setVisible(true);
-            menu.findItem(R.id.action_popularity).setVisible(true);
-        }
         return true;
     }
 
@@ -180,19 +175,16 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_popularity:
-                checkInternetAndRun(MOVIES_URL_POPULAR);
-                mAdapter.clear();
+                runLoader(MOVIES_URL_POPULAR);
                 return true;
             case R.id.action_rating:
-                checkInternetAndRun(MOVIES_URL_RATING);
-                mAdapter.clear();
+                runLoader(MOVIES_URL_RATING);
                 return true;
             case R.id.action_favorites:
                 Toast.makeText(this, "favorites clicked", Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
     }
-
 
     @Override
     public void onListItemClick(Movie movie) {

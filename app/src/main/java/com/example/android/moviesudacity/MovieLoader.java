@@ -20,7 +20,7 @@ public class MovieLoader extends AsyncTaskLoader<List<Movie>>{
         if (mUrl == null) {
             return null;
         }
-        return networkHelper.moviesData(mUrl, getContext());
+        return NetworkHelper.moviesData(mUrl, getContext());
     }
 
     @Override
