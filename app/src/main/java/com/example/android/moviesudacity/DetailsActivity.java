@@ -33,7 +33,7 @@ public class DetailsActivity extends AppCompatActivity {
     private TextView synopsis;
     private FloatingActionButton fab;
     private Movie clickedMovie;
-    private int moviePosition;
+    private long moviePosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +50,7 @@ public class DetailsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         clickedMovie = intent.getParcelableExtra("clickedMovie");
-        moviePosition = intent.getIntExtra("position", -1);
+        moviePosition = intent.getIntExtra("position" + 1, 0);
 
         Picasso.with(DetailsActivity.this).load(clickedMovie.getPosterPath()).into(image);
         Picasso.with(DetailsActivity.this).load(clickedMovie.getBackdropPath()).into(backDrop);
@@ -59,7 +59,6 @@ public class DetailsActivity extends AppCompatActivity {
         rating.setText(Double.toString(clickedMovie.getVoteAverage()));
         synopsis.setText(clickedMovie.getOverview());
         updateFavIcon();
-
 
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -94,20 +93,14 @@ public class DetailsActivity extends AppCompatActivity {
 
     private void deleteFavorite(){
         Uri currentUri = ContentUris.withAppendedId(MoviesEntry.CONTENT_URI, moviePosition);
-        Toast.makeText(this, currentUri+"", Toast.LENGTH_SHORT).show();
         int rowsDeleted = getContentResolver().delete(currentUri, null, null);
-
         if (rowsDeleted == 0) {
-            Toast.makeText(this, "Delete pet failed",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Delete movie failed",Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Delete movie success",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Delete movie success", Toast.LENGTH_SHORT).show();
         }
-
         clickedMovie.setFavorite(false);
         updateFavIcon();
-
     }
 
 

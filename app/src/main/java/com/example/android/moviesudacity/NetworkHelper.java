@@ -154,18 +154,19 @@ public class NetworkHelper {
         }
     }
 
-    public static List<Movie> networkMovies (String requestUrl, Context context) {
+    public static MoviesList networkMovies (String requestUrl, Context context) {
         List<String> moviesIds = extractMoviesIds(requestUrl, context);
         List<Movie> movies = extractMoviesInfo(moviesIds, context);
         cacheJsonImages(movies, context);
-        return movies;
+
+        return new MoviesList(movies, false);
     }
 
-    public static List<Movie> favoritesMovies (ArrayList<String> moviesIds, Context context) {
+    public static MoviesList favoritesMovies (ArrayList<String> moviesIds, Context context) {
         List<Movie> movies = extractMoviesInfo(moviesIds, context);
         setFavorite(movies);
         cacheJsonImages(movies, context);
-        return movies;
+        return new MoviesList(movies, true);
     }
 
     private static void setFavorite(List<Movie> list){

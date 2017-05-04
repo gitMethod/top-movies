@@ -18,12 +18,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.moviesudacity.data.MoviesContract;
-import com.example.android.moviesudacity.data.MoviesDbHelper;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static com.example.android.moviesudacity.R.id.progressBarParent;
 
@@ -43,11 +42,7 @@ public class MainActivity extends AppCompatActivity implements
     private RecyclerView recView;
     private MoviesList moviesList;
     private LoaderManager loaderManager;
-    private LoaderManager.LoaderCallbacks<List<Movie>> networkLoader;
-    private LoaderManager.LoaderCallbacks<Cursor> persistLoader;
-    private MoviesDbHelper moviesDbHelper;
     private ArrayList<String> moviesIds;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,66 +57,12 @@ public class MainActivity extends AppCompatActivity implements
         recView.setAdapter(mAdapter);
         loaderManager = getLoaderManager();
 
-        networkLoader = new LoaderManager.LoaderCallbacks<List<Movie>>() {
-            @Override
-            public Loader<List<Movie>> onCreateLoader(int id, Bundle args) {
-                String url = args.getString("url");
-                ArrayList<String> moviesIds = args.getStringArrayList("ids");
-                if( url == null){
-                    return new MovieLoader(MainActivity.this, moviesIds);
-                } else {
-                    return new MovieLoader(MainActivity.this, url);
-                }
-            }
-            @Override
-            public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> data) {
-                moviesList = new MoviesList(data);
-                mAdapter.swap(moviesList.getList());
-                progressBarVisibility(false);
-            }
-            @Override
-            public void onLoaderReset(Loader<List<Movie>> loader) {}
-        };
-
-        persistLoader = new LoaderManager.LoaderCallbacks<Cursor>(){
-            @Override
-            public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-                String[] projection = {
-                        MoviesContract.MoviesEntry._ID,
-                        MoviesContract.MoviesEntry.COLUMN_MOVIE_ID
-                };
-                return new CursorLoader(MainActivity.this,
-                        MoviesContract.MoviesEntry.CONTENT_URI,
-                        projection,
-                        null,
-                        null,
-                        null);
-            }
-            @Override
-            public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-                ArrayList<String> favoriteIds = new ArrayList<>();
-                int columnIndex = data.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_MOVIE_ID);
-                while(data.moveToNext()) {
-                    favoriteIds.add(data.getString(columnIndex));
-                }
-                moviesIds = favoriteIds;
-                runLoader(null, moviesIds);
-            }
-            @Override
-            public void onLoaderReset(Loader<Cursor> loader) {}
-        };
-
-        loaderManager.restartLoader(PERSIST_LOADER_ID, null, persistLoader);
-
         if(savedInstanceState == null){
             runLoader(MOVIES_URL_POPULAR, null);
-
         } else {
             progressBarVisibility(false);
             moviesList = savedInstanceState.getParcelable("savedMovies");
             mAdapter.swap(moviesList.getList());
-            runLoader(null, moviesIds);
-
         }
     }
 
@@ -185,8 +126,9 @@ public class MainActivity extends AppCompatActivity implements
                 getSupportActionBar().setTitle("Top 25 by rating");
                 return true;
             case R.id.action_favorites:
-                loaderManager.restartLoader(PERSIST_LOADER_ID, null, persistLoader);
+                runLoader(null, moviesIds);
                 getSupportActionBar().setTitle("My favorites");
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -207,6 +149,67 @@ public class MainActivity extends AppCompatActivity implements
                 return;
             }
         }
+    }
+
+    private LoaderManager.LoaderCallbacks<MoviesList> networkLoader = new LoaderManager.LoaderCallbacks<MoviesList>() {
+        @Override
+        public Loader<MoviesList> onCreateLoader(int id, Bundle args) {
+            String url = args.getString("url");
+            ArrayList<String> moviesIds = args.getStringArrayList("ids");
+            if( url == null){
+                return new MovieLoader(MainActivity.this, moviesIds);
+            } else {
+                return new MovieLoader(MainActivity.this, url);
+            }
+        }
+        @Override
+        public void onLoadFinished(Loader<MoviesList> loader, MoviesList data) {
+            moviesList = data;
+            mAdapter.swap(moviesList.getList());
+            progressBarVisibility(false);
+        }
+        @Override
+        public void onLoaderReset(Loader<MoviesList> loader) {}
+    };
+
+
+
+    private LoaderManager.LoaderCallbacks<Cursor> persistLoader = new LoaderManager.LoaderCallbacks<Cursor>(){
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            String[] projection = {
+                    MoviesContract.MoviesEntry._ID,
+                    MoviesContract.MoviesEntry.COLUMN_MOVIE_ID
+            };
+            return new CursorLoader(MainActivity.this,
+                    MoviesContract.MoviesEntry.CONTENT_URI,
+                    projection,
+                    null,
+                    null,
+                    null);
+        }
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            ArrayList<String> favoriteIds = new ArrayList<>();
+            int columnIndex = data.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_MOVIE_ID);
+            while(data.moveToNext()) {
+                favoriteIds.add(data.getString(columnIndex));
+            }
+            moviesIds = favoriteIds;
+        }
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {}};
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+            loaderManager.restartLoader(PERSIST_LOADER_ID, null, persistLoader);
+
+        if(moviesList != null && moviesList.isDatabaseArray()){
+            runLoader(null, moviesIds);
+            Toast.makeText(this, "triggered", Toast.LENGTH_SHORT).show();
+        }
+
     }
 }
 

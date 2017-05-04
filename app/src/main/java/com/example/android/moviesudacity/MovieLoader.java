@@ -5,9 +5,8 @@ import android.content.Context;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class MovieLoader extends AsyncTaskLoader<List<Movie>>{
+public class MovieLoader extends AsyncTaskLoader<MoviesList>{
 
     private static final String LOG_TAG = MovieLoader.class.getName();
     private String mUrl;
@@ -24,7 +23,7 @@ public class MovieLoader extends AsyncTaskLoader<List<Movie>>{
     }
 
     @Override
-    public List<Movie> loadInBackground() {
+    public MoviesList loadInBackground() {
         if (mUrl == null) {
             Log.e(LOG_TAG, "calling favorites");
             return NetworkHelper.favoritesMovies(moviesIds, getContext());
