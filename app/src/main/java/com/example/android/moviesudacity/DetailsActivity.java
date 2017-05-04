@@ -1,6 +1,5 @@
 package com.example.android.moviesudacity;
 
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
@@ -92,8 +91,7 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     private void deleteFavorite(){
-        Uri currentUri = ContentUris.withAppendedId(MoviesEntry.CONTENT_URI, moviePosition);
-        int rowsDeleted = getContentResolver().delete(currentUri, null, null);
+        int rowsDeleted = getContentResolver().delete(MoviesEntry.CONTENT_URI,"id=?", new String[]{clickedMovie.getId()});
         if (rowsDeleted == 0) {
             Toast.makeText(this, "Delete movie failed",Toast.LENGTH_SHORT).show();
         } else {
