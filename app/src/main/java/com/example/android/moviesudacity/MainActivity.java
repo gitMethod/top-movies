@@ -121,11 +121,10 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onListItemClick(Movie movie, int position) {
+    public void onListItemClick(Movie movie) {
         Intent intent = new Intent(this, DetailsActivity.class);
         markFavorite(movie);
         intent.putExtra("clickedMovie", movie);
-        intent.putExtra("position", position);
         startActivity(intent);
     }
 

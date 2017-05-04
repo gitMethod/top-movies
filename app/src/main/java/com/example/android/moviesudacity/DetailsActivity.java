@@ -4,12 +4,13 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -32,7 +33,6 @@ public class DetailsActivity extends AppCompatActivity {
     private TextView synopsis;
     private FloatingActionButton fab;
     private Movie clickedMovie;
-    private long moviePosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +49,6 @@ public class DetailsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         clickedMovie = intent.getParcelableExtra("clickedMovie");
-        moviePosition = intent.getIntExtra("position" + 1, 0);
 
         Picasso.with(DetailsActivity.this).load(clickedMovie.getPosterPath()).into(image);
         Picasso.with(DetailsActivity.this).load(clickedMovie.getBackdropPath()).into(backDrop);
@@ -145,26 +144,12 @@ public class DetailsActivity extends AppCompatActivity {
         }
 
         for (final MovieReview review : clickedMovie.getReviews()) {
-            LinearLayout linearLayout = new LinearLayout(this);
-            LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams
-                    (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
-            linearLayout.setOrientation(LinearLayout.VERTICAL);
-            int marginBottom = (int) (getResources().getDisplayMetrics().density * 24 + 0.5f);
-            linearParams.setMargins(0,0,0,marginBottom);
-            linearLayout.setLayoutParams(linearParams);
-            reviewsContainer.addView(linearLayout);
-
-            TextView authorTv = new TextView(this);
-            authorTv.setText(review.getAuthor());
-            TextViewCompat.setTextAppearance( authorTv, R.style.TextAppearance_AppCompat_Subhead);
-            linearLayout.addView(authorTv);
-
-            TextView contentTv = new TextView(this);
-            contentTv.setText(review.getContent().replace("\n\r", ""));
-            TextViewCompat.setTextAppearance( contentTv, R.style.CustomBody);
-            contentTv.setMaxLines(2);
-            contentTv.setEllipsize(TextUtils.TruncateAt.END);
-            linearLayout.addView(contentTv);
+            ConstraintLayout constraintLayout = (ConstraintLayout) LayoutInflater.from(this).inflate(R.layout.review_layout, null, false);
+            TextView title = (TextView) constraintLayout.getChildAt(0);
+            title.setText(review.getAuthor());
+            TextView content = (TextView) constraintLayout.getChildAt(1);
+            content.setText(review.getContent().replace("\n\r", ""));
+            reviewsContainer.addView(constraintLayout);
 
             View.OnClickListener clickListener = new View.OnClickListener() {
                 public void onClick(View v) {
@@ -174,7 +159,7 @@ public class DetailsActivity extends AppCompatActivity {
                             .show();
                 }
             };
-            linearLayout.setOnClickListener(clickListener);
+            constraintLayout.setOnClickListener(clickListener);
         }
 
     }

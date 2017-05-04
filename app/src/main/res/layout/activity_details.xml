@@ -46,7 +46,6 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="120dp"
         android:ellipsize="end"
-        android:text="dummy title"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
