@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.android.moviesudacity.data.MoviesContract;
 
@@ -58,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements
         loaderManager = getLoaderManager();
 
         if(savedInstanceState == null){
-            runLoader(MOVIES_URL_POPULAR, null);
+            runLoader(MOVIES_URL_POPULAR);
         } else {
             progressBarVisibility(false);
             moviesList = savedInstanceState.getParcelable("savedMovies");
@@ -70,18 +69,6 @@ public class MainActivity extends AppCompatActivity implements
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable("savedMovies", moviesList);
-    }
-
-    public void runLoader(String url, ArrayList<String> moviesIds){
-        mAdapter.clear();
-        Bundle bundle = new Bundle();
-        bundle.putString("url", url);
-        bundle.putStringArrayList("ids", moviesIds);
-
-        if(checkConnection()) {
-            loaderManager.restartLoader(NETWORK_LOADER_ID, bundle, networkLoader);
-            progressBarVisibility(true);
-        }
     }
 
     public boolean checkConnection(){
@@ -118,15 +105,15 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_popularity:
-                runLoader(MOVIES_URL_POPULAR, null);
+                runLoader(MOVIES_URL_POPULAR);
                 getSupportActionBar().setTitle("Top 25 by popularity");
                 return true;
             case R.id.action_rating:
-                runLoader(MOVIES_URL_RATING, null);
+                runLoader(MOVIES_URL_RATING);
                 getSupportActionBar().setTitle("Top 25 by rating");
                 return true;
             case R.id.action_favorites:
-                runLoader(null, moviesIds);
+                runLoader(null);
                 getSupportActionBar().setTitle("My favorites");
                 return true;
         }
@@ -151,6 +138,49 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    public void runLoader(String url){
+        mAdapter.clear();
+        Bundle bundle = new Bundle();
+        bundle.putString("url", url);
+
+
+        if(checkConnection()) {
+            loaderManager.restartLoader(PERSIST_LOADER_ID, bundle, persistLoader);
+            progressBarVisibility(true);
+        }
+    }
+
+    private LoaderManager.LoaderCallbacks<Cursor> persistLoader = new LoaderManager.LoaderCallbacks<Cursor>(){
+        Bundle customBundle;
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            customBundle = args;
+            String[] projection = {
+                    MoviesContract.MoviesEntry._ID,
+                    MoviesContract.MoviesEntry.COLUMN_MOVIE_ID
+            };
+            return new CursorLoader(MainActivity.this,
+                    MoviesContract.MoviesEntry.CONTENT_URI,
+                    projection,
+                    null,
+                    null,
+                    null);
+        }
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            ArrayList<String> favoriteIds = new ArrayList<>();
+            int columnIndex = data.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_MOVIE_ID);
+            while(data.moveToNext()) {
+                favoriteIds.add(data.getString(columnIndex));
+            }
+            moviesIds = favoriteIds;
+            customBundle.putStringArrayList("ids", moviesIds);
+            loaderManager.restartLoader(NETWORK_LOADER_ID, customBundle, networkLoader);
+        }
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {}
+    };
+
     private LoaderManager.LoaderCallbacks<MoviesList> networkLoader = new LoaderManager.LoaderCallbacks<MoviesList>() {
         @Override
         public Loader<MoviesList> onCreateLoader(int id, Bundle args) {
@@ -172,42 +202,13 @@ public class MainActivity extends AppCompatActivity implements
         public void onLoaderReset(Loader<MoviesList> loader) {}
     };
 
-
-
-    private LoaderManager.LoaderCallbacks<Cursor> persistLoader = new LoaderManager.LoaderCallbacks<Cursor>(){
-        @Override
-        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            String[] projection = {
-                    MoviesContract.MoviesEntry._ID,
-                    MoviesContract.MoviesEntry.COLUMN_MOVIE_ID
-            };
-            return new CursorLoader(MainActivity.this,
-                    MoviesContract.MoviesEntry.CONTENT_URI,
-                    projection,
-                    null,
-                    null,
-                    null);
-        }
-        @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-            ArrayList<String> favoriteIds = new ArrayList<>();
-            int columnIndex = data.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_MOVIE_ID);
-            while(data.moveToNext()) {
-                favoriteIds.add(data.getString(columnIndex));
-            }
-            moviesIds = favoriteIds;
-        }
-        @Override
-        public void onLoaderReset(Loader<Cursor> loader) {}};
-
     @Override
     protected void onResume() {
         super.onResume();
-            loaderManager.restartLoader(PERSIST_LOADER_ID, null, persistLoader);
 
         if(moviesList != null && moviesList.isDatabaseArray()){
-            runLoader(null, moviesIds);
-            Toast.makeText(this, "triggered", Toast.LENGTH_SHORT).show();
+            runLoader(null);
+            getSupportActionBar().setTitle("My favorites");
         }
 
     }
