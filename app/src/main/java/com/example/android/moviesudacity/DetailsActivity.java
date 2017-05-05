@@ -9,6 +9,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -144,12 +145,14 @@ public class DetailsActivity extends AppCompatActivity {
         }
 
         for (final MovieReview review : clickedMovie.getReviews()) {
-            ConstraintLayout constraintLayout = (ConstraintLayout) LayoutInflater.from(this).inflate(R.layout.review_layout, null, false);
+            CardView cardView = (CardView) LayoutInflater.from(this).inflate(R.layout.review_layout, reviewsContainer, false);
+            ConstraintLayout constraintLayout = (ConstraintLayout) cardView.getChildAt(0);
+
             TextView title = (TextView) constraintLayout.getChildAt(0);
             title.setText(review.getAuthor());
             TextView content = (TextView) constraintLayout.getChildAt(1);
             content.setText(review.getContent().replace("\n\r", ""));
-            reviewsContainer.addView(constraintLayout);
+            reviewsContainer.addView(cardView);
 
             View.OnClickListener clickListener = new View.OnClickListener() {
                 public void onClick(View v) {
@@ -159,7 +162,7 @@ public class DetailsActivity extends AppCompatActivity {
                             .show();
                 }
             };
-            constraintLayout.setOnClickListener(clickListener);
+            cardView.setOnClickListener(clickListener);
         }
 
     }
