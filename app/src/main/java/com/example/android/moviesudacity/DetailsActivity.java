@@ -101,7 +101,6 @@ public class DetailsActivity extends AppCompatActivity {
         updateFavIcon();
     }
 
-
     private void generateTrailers(){
         LinearLayout layout = (LinearLayout) findViewById(R.id.linear);
         for (final MovieTrailer trailer : clickedMovie.getTrailers()) {
@@ -140,6 +139,8 @@ public class DetailsActivity extends AppCompatActivity {
         if (clickedMovie.getReviews().isEmpty()){
             TextView txvEmpty = new TextView(this);
             txvEmpty.setText("No review found for this movie");
+            int pxToDp = (int) (getResources().getDisplayMetrics().density * 16 + 0.5f); // 1dp to pixels
+            txvEmpty.setPadding(pxToDp,pxToDp,pxToDp,pxToDp);
             TextViewCompat.setTextAppearance(txvEmpty, R.style.CustomBody);
             reviewsContainer.addView(txvEmpty);
         }
@@ -164,6 +165,5 @@ public class DetailsActivity extends AppCompatActivity {
             };
             cardView.setOnClickListener(clickListener);
         }
-
     }
 }

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Top 25 by popularity</string>
+    <string name="vertical_ellipsis">&#8942;</string>
 </resources>
