@@ -34,6 +34,7 @@ public class DetailsActivity extends AppCompatActivity {
     private TextView synopsis;
     private FloatingActionButton fab;
     private Movie clickedMovie;
+    private Toast toast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +48,7 @@ public class DetailsActivity extends AppCompatActivity {
         rating = (TextView) findViewById(R.id.details_rating);
         synopsis = (TextView) findViewById(R.id.details_synopsis);
         fab = (FloatingActionButton) findViewById(R.id.details_fab);
+        toast = new Toast(this);
 
         Intent intent = getIntent();
         clickedMovie = intent.getParcelableExtra("clickedMovie");
@@ -85,7 +87,16 @@ public class DetailsActivity extends AppCompatActivity {
     private void insertFavorite(){
         ContentValues values = new ContentValues();
         values.put(MoviesEntry.COLUMN_MOVIE_ID, clickedMovie.getId());
-        getContentResolver().insert(MoviesEntry.CONTENT_URI, values);
+        Uri uri = getContentResolver().insert(MoviesEntry.CONTENT_URI, values);
+        if(uri == null){
+            if (toast != null) toast.cancel();
+            toast = Toast.makeText(this, "Add movie failed",Toast.LENGTH_SHORT);
+            toast.show();
+        } else {
+            if (toast != null) toast.cancel();
+            toast = Toast.makeText(this, "Add movie succeed",Toast.LENGTH_SHORT);
+            toast.show();
+        }
         clickedMovie.setFavorite(true);
         updateFavIcon();
     }
@@ -93,9 +104,13 @@ public class DetailsActivity extends AppCompatActivity {
     private void deleteFavorite(){
         int rowsDeleted = getContentResolver().delete(MoviesEntry.CONTENT_URI,"id=?", new String[]{clickedMovie.getId()});
         if (rowsDeleted == 0) {
-            Toast.makeText(this, "Delete movie failed",Toast.LENGTH_SHORT).show();
+            if (toast != null) toast.cancel();
+            toast = Toast.makeText(this, "Delete movie failed",Toast.LENGTH_SHORT);
+            toast.show();
         } else {
-            Toast.makeText(this, "Delete movie success", Toast.LENGTH_SHORT).show();
+            if (toast != null) toast.cancel();
+            toast = Toast.makeText(this, "Delete movie succeed",Toast.LENGTH_SHORT);
+            toast.show();
         }
         clickedMovie.setFavorite(false);
         updateFavIcon();

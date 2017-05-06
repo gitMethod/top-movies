@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">Top 25 by popularity</string>
     <string name="vertical_ellipsis">&#8942;</string>
+    <string name="details_synopsis">Synopsis</string>
+    <string name="details_trailers">Trailers</string>
+    <string name="details_Reviews">Reviews</string>
+    <string name="details_small_ten">/10</string>
+
+    <string name="header_details">Movie details</string>
+    <string name="header_rating">Top 25 by rating</string>
+    <string name="header_favorites">My favorites</string>
+
+    <string name="no_connection">No internet connection</string>
+    <string name="list_empty">Your list is empty</string>
+    <string name="loading_data">Loading movies</string>
 </resources>

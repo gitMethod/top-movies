@@ -17,14 +17,13 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.moviesudacity.data.MoviesContract;
 
 import java.util.ArrayList;
 
-import static com.example.android.moviesudacity.R.id.progressBarParent;
 
 public class MainActivity extends AppCompatActivity implements
          MoviesAdapter.ListItemClickListener {
@@ -43,25 +42,28 @@ public class MainActivity extends AppCompatActivity implements
     private MoviesList moviesList;
     private LoaderManager loaderManager;
     private ArrayList<String> moviesIds;
+    private TextView progressText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         moviesIds = new ArrayList<>();
         recView = (RecyclerView) findViewById(R.id.movies_list);
-        if(MainActivity.this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+        if( MainActivity.this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT &&
+                !isTablet(MainActivity.this) ) {
             recView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         } else {
             recView.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
         }
         recView.setHasFixedSize(true);
 
+        progressText = (TextView) findViewById(R.id.progress_text);
         mAdapter = new MoviesAdapter(new ArrayList<Movie>(), this, MainActivity.this);
         recView.setAdapter(mAdapter);
         loaderManager = getLoaderManager();
+        emptyImageVisibility(false);
 
         if(savedInstanceState == null){
             runLoader(MOVIES_URL_POPULAR);
@@ -70,6 +72,12 @@ public class MainActivity extends AppCompatActivity implements
             moviesList = savedInstanceState.getParcelable("savedMovies");
             mAdapter.swap(moviesList.getList());
         }
+    }
+
+    public boolean isTablet(Context context) {
+        return (context.getResources().getConfiguration().screenLayout
+                & Configuration.SCREENLAYOUT_SIZE_MASK)
+                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
     @Override
@@ -84,21 +92,26 @@ public class MainActivity extends AppCompatActivity implements
         if (networkInfo != null && networkInfo.isConnected()){
             return true;
         }
-        TextView progressText = (TextView) findViewById(R.id.progress_text);
-        progressText.setText("No internet connection");
-        progressBarVisibility(true);
+        progressText.setText(getResources().getString(R.string.no_connection));
+        progressBarVisibility(false);
         return false;
     }
 
     public void progressBarVisibility(boolean status) {
-        LinearLayout spinner =(LinearLayout)findViewById(progressBarParent);
         View progressBar = findViewById(R.id.progress_bar);
         if(status){
-            spinner.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.VISIBLE);
         } else {
-            spinner.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);
+        }
+    }
+
+    public void emptyImageVisibility(boolean status) {
+        ImageView emptyMovieList = (ImageView) findViewById(R.id.empty_movies);
+        if(status){
+            emptyMovieList.setVisibility(View.VISIBLE);
+        } else {
+            emptyMovieList.setVisibility(View.GONE);
         }
     }
 
@@ -113,15 +126,15 @@ public class MainActivity extends AppCompatActivity implements
         switch (item.getItemId()) {
             case R.id.action_popularity:
                 runLoader(MOVIES_URL_POPULAR);
-                getSupportActionBar().setTitle("Top 25 by popularity");
+                getSupportActionBar().setTitle(getResources().getString(R.string.app_name));
                 return true;
             case R.id.action_rating:
                 runLoader(MOVIES_URL_RATING);
-                getSupportActionBar().setTitle("Top 25 by rating");
+                getSupportActionBar().setTitle(getResources().getString(R.string.header_rating));
                 return true;
             case R.id.action_favorites:
                 runLoader(null);
-                getSupportActionBar().setTitle("My favorites");
+                getSupportActionBar().setTitle(getResources().getString(R.string.header_favorites));
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -145,10 +158,12 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void runLoader(String url){
+        progressText.setText(getResources().getString(R.string.loading_data));
+        emptyImageVisibility(false);
+
         mAdapter.clear();
         Bundle bundle = new Bundle();
         bundle.putString("url", url);
-
 
         if(checkConnection()) {
             loaderManager.restartLoader(PERSIST_LOADER_ID, bundle, persistLoader);
@@ -203,6 +218,11 @@ public class MainActivity extends AppCompatActivity implements
             moviesList = data;
             mAdapter.swap(moviesList.getList());
             progressBarVisibility(false);
+            progressText.setText("");
+            if(moviesList.getList().isEmpty()){
+                emptyImageVisibility(true);
+                progressText.setText(getResources().getString(R.string.list_empty));
+            }
         }
         @Override
         public void onLoaderReset(Loader<MoviesList> loader) {}
@@ -214,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements
 
         if(moviesList != null && moviesList.isDatabaseArray()){
             runLoader(null);
-            getSupportActionBar().setTitle("My favorites");
+            getSupportActionBar().setTitle(getResources().getString(R.string.header_favorites));
         }
 
     }

@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
 public class MoviesProvider extends ContentProvider{
     public static final String LOG_TAG = MoviesProvider.class.getSimpleName();
@@ -92,7 +91,7 @@ public class MoviesProvider extends ContentProvider{
             Log.e(LOG_TAG, "Failed to insert row for " + uri);
             return null;
         } else {
-            Toast.makeText(getContext(), "insert successful", Toast.LENGTH_SHORT).show();
+            Log.e(LOG_TAG, "succeed to insert row for " + uri);
         }
         getContext().getContentResolver().notifyChange(uri, null);
         return ContentUris.withAppendedId(uri, id);
